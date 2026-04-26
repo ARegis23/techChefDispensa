@@ -6,6 +6,15 @@ from config.firebase_config import iniciar_firebase
 
 db = iniciar_firebase()
 
+# Preferências padrão de acessibilidade para novos usuários
+PREFERENCIAS_ACESSIBILIDADE_PADRAO = {
+    "tema": "sistema",
+    "tamanho_texto": "medio",
+    "contraste": "normal",
+    "reduzir_animacoes": "nao",
+    "densidade_interface": "confortavel",
+    "fonte_legivel": "padrao"
+}
 
 def buscar_usuario_por_uid(uid):
     doc = db.collection("usuarios").document(uid).get()
@@ -222,3 +231,54 @@ def deletar_usuario(usuario_logado, uid_alvo):
         "ativo": False,
         "deletado_em": firestore.SERVER_TIMESTAMP
     })
+
+    PREFERENCIAS_ACESSIBILIDADE_PADRAO = {
+    "tema": "sistema",
+    "tamanho_texto": "medio",
+    "contraste": "normal",
+    "reduzir_animacoes": "nao",
+    "densidade_interface": "confortavel",
+    "fonte_legivel": "padrao"
+}
+
+def buscar_preferencias_acessibilidade(uid):
+    """
+    Busca as preferências pessoais de acessibilidade do usuário.
+
+    Se o usuário ainda não tiver preferências salvas,
+    retorna os valores padrão.
+    """
+
+    usuario = buscar_usuario_por_uid(uid)
+
+    if not usuario:
+        return PREFERENCIAS_ACESSIBILIDADE_PADRAO.copy()
+
+    preferencias_salvas = usuario.get("acessibilidade", {})
+
+    preferencias = PREFERENCIAS_ACESSIBILIDADE_PADRAO.copy()
+    preferencias.update(preferencias_salvas)
+
+    return preferencias
+
+
+def atualizar_preferencias_acessibilidade(uid, dados):
+    """
+    Atualiza as preferências pessoais de acessibilidade do usuário logado.
+    """
+
+    preferencias = {
+        "tema": dados.get("tema", "sistema"),
+        "tamanho_texto": dados.get("tamanho_texto", "medio"),
+        "contraste": dados.get("contraste", "normal"),
+        "reduzir_animacoes": dados.get("reduzir_animacoes", "nao"),
+        "densidade_interface": dados.get("densidade_interface", "confortavel"),
+        "fonte_legivel": dados.get("fonte_legivel", "padrao")
+    }
+
+    db.collection("usuarios").document(uid).update({
+        "acessibilidade": preferencias,
+        "atualizado_em": firestore.SERVER_TIMESTAMP
+    })
+
+    return preferencias

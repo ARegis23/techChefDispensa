@@ -12,15 +12,17 @@ from flask import (
 )
 
 from services.auth_service import verificar_token_firebase
-from services.usuario_service import garantir_usuario_logado
 from services.usuario_service import (
+    garantir_usuario_logado,
     listar_usuarios_da_conta,
     buscar_usuario_por_uid,
     criar_usuario_membro,
     atualizar_usuario,
     deletar_usuario,
     pode_editar_usuario,
-    pode_deletar_usuario
+    pode_deletar_usuario,
+    buscar_preferencias_acessibilidade,
+    atualizar_preferencias_acessibilidade
 )
 
 web_bp = Blueprint("web", __name__)
@@ -139,10 +141,45 @@ def dashboard():
     return render_template("menu/dashboardPage.html")
 
 
-@web_bp.route("/menu/configuracoes")
+@web_bp.route("/menu/configuracoes", methods=["GET", "POST"])
 @login_required
 def configuracoes():
-    return render_template("menu/configuracoesPage.html")
+    usuario_logado = session.get("usuario")
+    uid = usuario_logado.get("uid")
+
+    if request.method == "POST":
+        acao = request.form.get("acao")
+
+        if acao == "salvar_acessibilidade":
+            try:
+                dados = {
+                    "tema": request.form.get("tema"),
+                    "tamanho_texto": request.form.get("tamanho_texto"),
+                    "contraste": request.form.get("contraste"),
+                    "reduzir_animacoes": request.form.get("reduzir_animacoes"),
+                    "densidade_interface": request.form.get("densidade_interface"),
+                    "fonte_legivel": request.form.get("fonte_legivel")
+                }
+
+                preferencias = atualizar_preferencias_acessibilidade(uid, dados)
+
+                session["usuario"]["acessibilidade"] = preferencias
+
+                flash("Preferências de acessibilidade atualizadas com sucesso.", "success")
+                return redirect(url_for("web.configuracoes"))
+
+            except Exception as erro:
+                print("Erro ao atualizar acessibilidade:", erro)
+                flash("Não foi possível salvar as preferências de acessibilidade.", "danger")
+                return redirect(url_for("web.configuracoes"))
+
+    preferencias = buscar_preferencias_acessibilidade(uid)
+
+    return render_template(
+        "menu/configuracoesPage.html",
+        preferencias=preferencias,
+        usuario_logado=usuario_logado
+    )
 
 
 @web_bp.route("/menu/alimentos")

@@ -228,8 +228,43 @@ O sistema trabalha inicialmente com dois papéis:
 - Possui ação de cancelar.
 - Possui ação de deletar quando permitido.
 
----
+## Admin pode modificar
 
+### Configurações pessoais de acessibilidade
+- Tema preferido.
+- Tamanho do texto.
+- Contraste da interface.
+- Redução de animações.
+- Densidade da interface.
+- Preferência de fonte legível.
+
+### Configurações de usuários
+- Acessar gerenciamento de usuários.
+- Adicionar usuários membros.
+- Editar usuários membros.
+- Deletar usuários membros.
+- Editar o próprio perfil.
+
+## Membro pode modificar
+
+### Configurações pessoais de acessibilidade
+- Tema preferido.
+- Tamanho do texto.
+- Contraste da interface.
+- Redução de animações.
+- Densidade da interface.
+- Preferência de fonte legível.
+
+### Configurações de usuários
+- Visualizar usuários da conta.
+- Editar apenas o próprio perfil.
+- Não pode adicionar usuários.
+- Não pode editar outros usuários.
+- Não pode deletar usuários.
+
+-------------------------------------------------
+-------------------------------------------------
+-------------------------------------------------
 # Testes recomendados
 
 ## 1. Testes com usuário administrador

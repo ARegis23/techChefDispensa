@@ -2,18 +2,175 @@
 
 {% block title %}Configurações - TechChef Dispensa{% endblock %}
 
+{% block page_title %}Configurações{% endblock %}
+
+{% block page_subtitle %}
+Preferências pessoais, acessibilidade e permissões disponíveis no sistema.
+{% endblock %}
+
 {% block content %}
 
-<h2>Configurações</h2>
+<section>
 
-<p>
-    Aqui futuramente ficarão as preferências do sistema.
-</p>
+    <p>
+        <a href="{{ url_for('web.dashboard') }}">
+            ← Voltar para o dashboard
+        </a>
+    </p>
 
-<ul>
-    <li>Configurações de usuário</li>
-    <li>Preferências de unidade de medida</li>
-    <li>Configurações de integração com Firebase</li>
-</ul>
+    <h2>Configurações</h2>
+
+    <p>
+        Usuário logado:
+        <strong>{{ usuario_logado.nome }}</strong>
+        |
+        Perfil:
+        <strong>
+            {% if usuario_logado.papel == "admin" %}
+                Administrador
+            {% else %}
+                Membro
+            {% endif %}
+        </strong>
+    </p>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h3>Minhas configurações de acessibilidade</h3>
+
+    <p>
+        Estas preferências são pessoais. Cada usuário pode alterar sua própria
+        experiência de uso, independentemente de ser administrador ou membro.
+    </p>
+
+    <form method="POST" action="{{ url_for('web.configuracoes') }}">
+
+        <input type="hidden" name="acao" value="salvar_acessibilidade">
+
+        <div>
+            <label for="tema">Tema da interface</label><br>
+
+            <select id="tema" name="tema">
+                <option value="sistema" {% if preferencias.tema == "sistema" %}selected{% endif %}>
+                    Usar padrão do sistema
+                </option>
+
+                <option value="claro" {% if preferencias.tema == "claro" %}selected{% endif %}>
+                    Claro
+                </option>
+
+                <option value="escuro" {% if preferencias.tema == "escuro" %}selected{% endif %}>
+                    Escuro
+                </option>
+            </select>
+        </div>
+
+        <br>
+
+        <div>
+            <label for="tamanho_texto">Tamanho do texto</label><br>
+
+            <select id="tamanho_texto" name="tamanho_texto">
+                <option value="pequeno" {% if preferencias.tamanho_texto == "pequeno" %}selected{% endif %}>
+                    Pequeno
+                </option>
+
+                <option value="medio" {% if preferencias.tamanho_texto == "medio" %}selected{% endif %}>
+                    Médio
+                </option>
+
+                <option value="grande" {% if preferencias.tamanho_texto == "grande" %}selected{% endif %}>
+                    Grande
+                </option>
+
+                <option value="extra_grande" {% if preferencias.tamanho_texto == "extra_grande" %}selected{% endif %}>
+                    Extra grande
+                </option>
+            </select>
+        </div>
+
+        <br>
+
+        <div>
+            <label for="contraste">Contraste</label><br>
+
+            <select id="contraste" name="contraste">
+                <option value="normal" {% if preferencias.contraste == "normal" %}selected{% endif %}>
+                    Normal
+                </option>
+
+                <option value="alto" {% if preferencias.contraste == "alto" %}selected{% endif %}>
+                    Alto contraste
+                </option>
+            </select>
+        </div>
+
+        <br>
+
+        <div>
+            <label for="reduzir_animacoes">Animações da interface</label><br>
+
+            <select id="reduzir_animacoes" name="reduzir_animacoes">
+                <option value="nao" {% if preferencias.reduzir_animacoes == "nao" %}selected{% endif %}>
+                    Manter animações
+                </option>
+
+                <option value="sim" {% if preferencias.reduzir_animacoes == "sim" %}selected{% endif %}>
+                    Reduzir animações
+                </option>
+            </select>
+        </div>
+
+        <br>
+
+        <div>
+            <label for="densidade_interface">Densidade da interface</label><br>
+
+            <select id="densidade_interface" name="densidade_interface">
+                <option value="compacta" {% if preferencias.densidade_interface == "compacta" %}selected{% endif %}>
+                    Compacta
+                </option>
+
+                <option value="confortavel" {% if preferencias.densidade_interface == "confortavel" %}selected{% endif %}>
+                    Confortável
+                </option>
+
+                <option value="espacada" {% if preferencias.densidade_interface == "espacada" %}selected{% endif %}>
+                    Espaçada
+                </option>
+            </select>
+        </div>
+
+        <br>
+
+        <div>
+            <label for="fonte_legivel">Fonte de leitura</label><br>
+
+            <select id="fonte_legivel" name="fonte_legivel">
+                <option value="padrao" {% if preferencias.fonte_legivel == "padrao" %}selected{% endif %}>
+                    Fonte padrão
+                </option>
+
+                <option value="legivel" {% if preferencias.fonte_legivel == "legivel" %}selected{% endif %}>
+                    Fonte com maior legibilidade
+                </option>
+            </select>
+        </div>
+
+        <br>
+
+        <button type="submit">
+            Salvar minhas preferências
+        </button>
+
+    </form>
+
+</section>
+
+<hr>
 
 {% endblock %}
