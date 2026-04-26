@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ titulo if titulo else "Sistema de Alimentos" }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <header class="topo">
+        <h1>Sistema de Alimentos</h1>
+
+        <nav>
+            <a href="{{ url_for('sobre') }}">Sobre</a>
+
+            {% if session.get("usuario_id") %}
+                <a href="{{ url_for('dashboard') }}">Menu</a>
+                <a href="{{ url_for('logout') }}">Sair</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="container">
+
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% if mensagens %}
+                {% for categoria, mensagem in mensagens %}
+                    <div class="alerta {{ categoria }}">
+                        {{ mensagem }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block conteudo %}
+        {% endblock %}
+
+    </main>
+
+</body>
+</html>
