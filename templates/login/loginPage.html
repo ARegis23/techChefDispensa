@@ -9,11 +9,24 @@
     <h2>Login</h2>
 
     <p>
-        Acesse o TechChef Dispensa para gerenciar alimentos, usuários,
-        configurações e informações da aplicação.
+        Acesse o TechChef Dispensa para gerenciar alimentos,
+        usuários e configurações da aplicação.
     </p>
 
-    <form method="POST" action="{{ url_for('web.login') }}">
+    <form id="form-login">
+
+        <div>
+            <label for="nome">Nome</label><br>
+
+            <input
+                type="text"
+                id="nome"
+                name="nome"
+                placeholder="Use apenas para criar conta"
+            >
+        </div>
+
+        <br>
 
         <div>
             <label for="email">E-mail</label><br>
@@ -44,16 +57,22 @@
         <br>
 
         <button type="submit">
-            Entrar
+            Entrar com e-mail
+        </button>
+
+        <button type="button" id="btn-criar-conta">
+            Criar conta
+        </button>
+
+        <hr>
+
+        <button type="button" id="btn-google">
+            Entrar com Google
         </button>
 
     </form>
 
-    <p>
-        <small>
-            Login temporário para teste da navegação. Depois será integrado ao Firebase.
-        </small>
-    </p>
+    <p id="auth-message"></p>
 
     <p>
         <a href="{{ url_for('web.sobre') }}">
@@ -62,5 +81,10 @@
     </p>
 
 </section>
+
+<script
+    type="module"
+    src="{{ url_for('static', filename='js/auth_login.js') }}">
+</script>
 
 {% endblock %}

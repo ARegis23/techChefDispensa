@@ -7,8 +7,11 @@ from flask import (
     redirect,
     url_for,
     session,
-    flash
+    flash,
+    jsonify
 )
+
+from services.auth_service import verificar_token_firebase
 
 web_bp = Blueprint("web", __name__)
 
@@ -18,7 +21,6 @@ def login_required(func):
     Protege as páginas internas.
     Se não houver usuário na sessão, volta para o login.
     """
-
     @wraps(func)
     def wrapper(*args, **kwargs):
         if "usuario" not in session:
@@ -32,56 +34,76 @@ def login_required(func):
 
 @web_bp.route("/")
 def index():
-    """
-    Página inicial do sistema.
-    Se estiver logado, vai para o dashboard.
-    Se não estiver, vai para o login.
-    """
-
     if "usuario" in session:
         return redirect(url_for("web.dashboard"))
 
     return redirect(url_for("web.login"))
 
 
-@web_bp.route("/login", methods=["GET", "POST"])
+@web_bp.route("/login", methods=["GET"])
 def login():
-    """
-    Login provisório apenas para testar a navegação.
-
-    Depois vamos substituir essa parte por Firebase Auth.
-    """
-
-    if request.method == "POST":
-        nome = request.form.get("nome")
-        email = request.form.get("email")
-
-        if not nome or not email:
-            flash("Informe nome e e-mail para continuar.", "danger")
-            return redirect(url_for("web.login"))
-
-        session["usuario"] = {
-            "nome": nome,
-            "email": email
-        }
-
-        flash(f"Bem-vindo, {nome}!", "success")
+    if "usuario" in session:
         return redirect(url_for("web.dashboard"))
 
     return render_template("login/loginPage.html")
+
+
+@web_bp.route("/auth/session-login", methods=["POST"])
+def session_login():
+    """
+    Recebe o ID Token do Firebase, valida no backend
+    e cria a sessão Flask.
+    """
+
+    try:
+        dados = request.get_json()
+
+        if not dados:
+            return jsonify({
+                "ok": False,
+                "erro": "Requisição sem JSON."
+            }), 400
+
+        id_token = dados.get("idToken")
+
+        if not id_token:
+            return jsonify({
+                "ok": False,
+                "erro": "Token não enviado."
+            }), 400
+
+        usuario = verificar_token_firebase(id_token)
+
+        session["usuario"] = {
+            "uid": usuario["uid"],
+            "nome": usuario["nome"],
+            "email": usuario["email"],
+            "foto": usuario["foto"]
+        }
+
+        return jsonify({
+            "ok": True,
+            "redirect": url_for("web.dashboard")
+        })
+
+    except Exception as erro:
+        print("Erro ao validar token Firebase:", erro)
+
+        return jsonify({
+            "ok": False,
+            "erro": "Token inválido ou expirado."
+        }), 401
 
 
 @web_bp.route("/sobre")
 def sobre():
     return render_template("login/aboutPage.html")
 
-
 @web_bp.route("/logout")
 def logout():
     session.clear()
     flash("Você saiu do sistema.", "info")
     return redirect(url_for("web.login"))
-
 
 @web_bp.route("/menu/dashboard")
 @login_required
