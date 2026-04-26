@@ -43,6 +43,16 @@ from services.alimento_service import (
 
 from services.export_service import gerar_json_exportacao
 
+from services.importacao_service import (
+    listar_importacoes,
+    buscar_importacao,
+    importar_por_barcode,
+    montar_dados_importacao_formulario,
+    atualizar_importacao,
+    deletar_importacao,
+    marcar_importacao_enviada_para_alimentos
+)
+
 web_bp = Blueprint("web", __name__)
 
 # Decorador para proteger rotas que exigem autenticação
@@ -529,3 +539,189 @@ def exportar_json_zip():
         print("Erro ao exportar dados:", erro)
         flash("Não foi possível exportar os dados da aplicação.", "danger")
         return redirect(url_for("web.configuracoes"))
+    
+
+ # Rotas para importação de dados
+
+@web_bp.route("/menu/importacoes")
+@login_required
+def importacao_list():
+    usuario_logado = session.get("usuario")
+
+    importacoes = listar_importacoes(usuario_logado)
+
+    return render_template(
+        "menu/importacoes/importacaoListPage.html",
+        importacoes=importacoes
+    )
+
+
+@web_bp.route("/menu/importacoes/nova", methods=["GET", "POST"])
+@login_required
+def importacao_add():
+    usuario_logado = session.get("usuario")
+
+    if request.method == "POST":
+        barcode = request.form.get("barcode", "").strip()
+
+        if not barcode:
+            flash("Informe o código de barras para importar.", "danger")
+            return redirect(url_for("web.importacao_add"))
+
+        try:
+            importacao = importar_por_barcode(usuario_logado, barcode)
+
+            if importacao.get("status") == "importado":
+                flash("Dados importados com sucesso.", "success")
+            else:
+                flash("Produto não encontrado na API. Registro criado para revisão manual.", "warning")
+
+            return redirect(url_for("web.importacao_list"))
+
+        except Exception as erro:
+            print("Erro ao importar dados:", erro)
+            flash("Não foi possível importar os dados.", "danger")
+            return redirect(url_for("web.importacao_add"))
+
+    return render_template("menu/importacoes/importacaoAddPage.html")
+
+
+@web_bp.route("/menu/importacoes/editar/<importacao_id>", methods=["GET", "POST"])
+@login_required
+def importacao_edit(importacao_id):
+    usuario_logado = session.get("usuario")
+
+    importacao = buscar_importacao(usuario_logado, importacao_id)
+
+    if not importacao:
+        flash("Importação não encontrada.", "danger")
+        return redirect(url_for("web.importacao_list"))
+
+    if request.method == "POST":
+        acao = request.form.get("acao")
+
+        if acao == "cancelar":
+            return redirect(url_for("web.importacao_list"))
+
+        if acao == "deletar":
+            try:
+                deletar_importacao(usuario_logado, importacao_id)
+                flash("Importação deletada com sucesso.", "success")
+                return redirect(url_for("web.importacao_list"))
+
+            except Exception as erro:
+                print("Erro ao deletar importação:", erro)
+                flash("Não foi possível deletar a importação.", "danger")
+                return redirect(url_for("web.importacao_edit", importacao_id=importacao_id))
+
+        try:
+            dados_importacao = montar_dados_importacao_formulario(
+                request.form,
+                usuario_logado
+            )
+
+            if not dados_importacao.get("barcode"):
+                flash("O código de barras é obrigatório.", "danger")
+                return redirect(url_for("web.importacao_edit", importacao_id=importacao_id))
+
+            atualizar_importacao(
+                usuario_logado,
+                importacao_id,
+                dados_importacao
+            )
+
+            flash("Importação atualizada com sucesso.", "success")
+            return redirect(url_for("web.importacao_list"))
+
+        except Exception as erro:
+            print("Erro ao atualizar importação:", erro)
+            flash("Não foi possível atualizar a importação.", "danger")
+            return redirect(url_for("web.importacao_edit", importacao_id=importacao_id))
+
+    return render_template(
+        "menu/importacoes/importacaoEditPage.html",
+        importacao=importacao
+    )
+
+
+@web_bp.route("/menu/importacoes/enviar-para-alimentos/<importacao_id>", methods=["POST"])
+@login_required
+def importacao_enviar_para_alimentos(importacao_id):
+    usuario_logado = session.get("usuario")
+
+    importacao = buscar_importacao(usuario_logado, importacao_id)
+
+    if not importacao:
+        flash("Importação não encontrada.", "danger")
+        return redirect(url_for("web.importacao_list"))
+
+    try:
+        dados_alimento = {
+            "barcode": importacao.get("barcode"),
+            "nome": importacao.get("nome"),
+            "marca": importacao.get("marca"),
+            "categoria": importacao.get("categoria"),
+            "peso": importacao.get("peso"),
+            "alergenos": importacao.get("alergenos"),
+
+            "kcal": importacao.get("kcal"),
+            "carboidratos": importacao.get("carboidratos"),
+            "proteinas": importacao.get("proteinas"),
+            "fibras": importacao.get("fibras"),
+            "sodio": importacao.get("sodio"),
+            "gorduras_totais": importacao.get("gorduras_totais"),
+            "gorduras_saturadas": importacao.get("gorduras_saturadas"),
+            "gorduras_trans": importacao.get("gorduras_trans"),
+            "acucares_totais": importacao.get("acucares_totais"),
+            "acucares_adicionados": importacao.get("acucares_adicionados"),
+
+            "origem_dados": "importacao",
+            "admin_uid": usuario_logado.get("admin_uid"),
+            "atualizado_por": usuario_logado.get("uid"),
+            "atualizado_por_nome": usuario_logado.get("nome")
+        }
+
+        alimento_existente = buscar_alimento(
+            usuario_logado,
+            dados_alimento.get("barcode")
+        )
+
+        if alimento_existente:
+            atualizar_alimento(
+                usuario_logado,
+                dados_alimento.get("barcode"),
+                dados_alimento
+            )
+            flash("Alimento atualizado com base na importação.", "success")
+        else:
+            criar_alimento(usuario_logado, dados_alimento)
+            flash("Alimento cadastrado com base na importação.", "success")
+
+        marcar_importacao_enviada_para_alimentos(
+            usuario_logado,
+            importacao_id
+        )
+
+        return redirect(url_for("web.alimento_list"))
+
+    except Exception as erro:
+        print("Erro ao enviar importação para alimentos:", erro)
+        flash("Não foi possível enviar a importação para alimentos.", "danger")
+        return redirect(url_for("web.importacao_edit", importacao_id=importacao_id))   
+    
+@web_bp.route("/menu/importacoes/deletar/<importacao_id>", methods=["POST"])
+@login_required
+def importacao_delete(importacao_id):
+    usuario_logado = session.get("usuario")
+
+    try:
+        deletar_importacao(usuario_logado, importacao_id)
+
+        flash("Importação deletada com sucesso.", "success")
+        return redirect(url_for("web.importacao_list"))
+
+    except Exception as erro:
+        print("Erro ao deletar importação:", erro)
+
+        flash("Não foi possível deletar a importação.", "danger")
+        return redirect(url_for("web.importacao_list"))

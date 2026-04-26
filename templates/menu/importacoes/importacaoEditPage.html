@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Importação - TechChef Dispensa{% endblock %}
+
+{% block page_title %}Editar importação{% endblock %}
+
+{% block page_subtitle %}
+Revise, atualize, delete ou envie os dados importados para alimentos.
+{% endblock %}
+
+{% block content %}
+
+<p>
+    <a href="{{ url_for('web.importacao_list') }}">
+        ← Voltar para importações
+    </a>
+</p>
+
+<section>
+
+    <h2>Dados da importação</h2>
+
+    <p>
+        <strong>Origem:</strong> {{ importacao.origem }}
+        <br>
+        <strong>Status:</strong> {{ importacao.status }}
+        <br>
+        <strong>Importado por:</strong> {{ importacao.importado_por_nome or "-" }}
+    </p>
+
+</section>
+
+<form method="POST" action="{{ url_for('web.importacao_edit', importacao_id=importacao.id) }}">
+
+    <div>
+        <label for="barcode">Barcode</label><br>
+        <input type="text" id="barcode" name="barcode" value="{{ importacao.barcode }}" required>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="nome">Nome</label><br>
+        <input type="text" id="nome" name="nome" value="{{ importacao.nome }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="marca">Marca</label><br>
+        <input type="text" id="marca" name="marca" value="{{ importacao.marca }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="peso">Peso</label><br>
+        <input type="text" id="peso" name="peso" value="{{ importacao.peso }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="categoria">Categoria</label><br>
+        <input type="text" id="categoria" name="categoria" value="{{ importacao.categoria }}">
+    </div>
+
+    <br>
+
+    <h3>Informações nutricionais</h3>
+
+    <div>
+        <label for="kcal">Kcal</label><br>
+        <input type="number" step="0.01" id="kcal" name="kcal" value="{{ importacao.kcal }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="carboidratos">Carboidratos</label><br>
+        <input type="number" step="0.01" id="carboidratos" name="carboidratos" value="{{ importacao.carboidratos }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="proteinas">Proteínas</label><br>
+        <input type="number" step="0.01" id="proteinas" name="proteinas" value="{{ importacao.proteinas }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="fibras">Fibras</label><br>
+        <input type="number" step="0.01" id="fibras" name="fibras" value="{{ importacao.fibras }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="sodio">Sódio mg</label><br>
+        <input type="number" step="0.01" id="sodio" name="sodio" value="{{ importacao.sodio }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="gorduras_totais">Gorduras totais</label><br>
+        <input type="number" step="0.01" id="gorduras_totais" name="gorduras_totais" value="{{ importacao.gorduras_totais }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="gorduras_saturadas">Gorduras saturadas</label><br>
+        <input type="number" step="0.01" id="gorduras_saturadas" name="gorduras_saturadas" value="{{ importacao.gorduras_saturadas }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="gorduras_trans">Gorduras trans</label><br>
+        <input type="number" step="0.01" id="gorduras_trans" name="gorduras_trans" value="{{ importacao.gorduras_trans }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="acucares_totais">Açúcares totais</label><br>
+        <input type="number" step="0.01" id="acucares_totais" name="acucares_totais" value="{{ importacao.acucares_totais }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="acucares_adicionados">Açúcares adicionados</label><br>
+        <input type="number" step="0.01" id="acucares_adicionados" name="acucares_adicionados" value="{{ importacao.acucares_adicionados }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="alergenos">Alérgenos</label><br>
+        <textarea id="alergenos" name="alergenos" rows="3">{{ importacao.alergenos }}</textarea>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="status">Status</label><br>
+
+        <select id="status" name="status">
+            <option value="importado" {% if importacao.status == "importado" %}selected{% endif %}>
+                Importado
+            </option>
+
+            <option value="nao_encontrado" {% if importacao.status == "nao_encontrado" %}selected{% endif %}>
+                Não encontrado
+            </option>
+
+            <option value="revisado" {% if importacao.status == "revisado" %}selected{% endif %}>
+                Revisado
+            </option>
+
+            <option value="enviado_para_alimentos" {% if importacao.status == "enviado_para_alimentos" %}selected{% endif %}>
+                Enviado para alimentos
+            </option>
+
+            <option value="descartado" {% if importacao.status == "descartado" %}selected{% endif %}>
+                Descartado
+            </option>
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="observacao">Observação</label><br>
+        <textarea id="observacao" name="observacao" rows="3">{{ importacao.observacao }}</textarea>
+    </div>
+
+    <br>
+
+    <button type="submit" name="acao" value="atualizar">
+        Atualizar
+    </button>
+
+    <button type="submit" name="acao" value="cancelar">
+        Cancelar
+    </button>
+
+    <button
+        type="submit"
+        name="acao"
+        value="deletar"
+        onclick="return confirm('Tem certeza que deseja deletar esta importação?')"
+    >
+        Deletar
+    </button>
+
+</form>
+
+<br>
+
+<form
+    method="POST"
+    action="{{ url_for('web.importacao_enviar_para_alimentos', importacao_id=importacao.id) }}"
+>
+    <button
+        type="submit"
+        onclick="return confirm('Deseja cadastrar ou atualizar este item como alimento?')"
+    >
+        Enviar para alimentos
+    </button>
+</form>
+
+<br>
+
+<p>
+    <a href="{{ url_for('web.importacao_list') }}">
+        ← Voltar
+    </a>
+</p>
+
+{% endblock %}

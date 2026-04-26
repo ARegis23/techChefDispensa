@@ -285,6 +285,28 @@ O sistema possui uma funcionalidade de exportação dos dados da aplicação.
 
 `/menu/configuracoes/exportar-json`
 
+## Coleção: importacoes
+
+A coleção `importacoes` armazena os dados obtidos de uma API externa antes de serem cadastrados como alimentos oficiais do sistema.
+
+### Caminho no Firestore
+
+`contas/{admin_uid}/importacoes/{importacao_id}`
+
+### Finalidade
+
+- Registrar dados vindos de endereço web.
+- Usar o módulo Requests no backend Python.
+- Armazenar os dados importados em uma coleção própria.
+- Apresentar os dados importados em uma UI da aplicação.
+- Permitir revisão antes de cadastrar como alimento.
+
+### Operações implementadas
+
+- Select: listar importações.
+- Insert: importar dados por barcode.
+- Update: editar dados importados.
+- Delete: excluir importação.
 
 -------------------------------------------------
 -------------------------------------------------

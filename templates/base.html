@@ -33,6 +33,11 @@
                     <span class="menu-text">Alimentos</span>
                 </a>
 
+                <a href="{{ url_for('web.importacao_list') }}">
+                    <span class="menu-icon">📥</span>
+                    <span class="menu-text">Importações</span>
+                </a>
+                
                 <a href="{{ url_for('web.usuario_list') }}">
                     <span class="menu-icon">👥</span>
                     <span class="menu-text">Usuários</span>
@@ -42,6 +47,7 @@
                     <span class="menu-icon">⚙️</span>
                     <span class="menu-text">Configurações</span>
                 </a>
+
             </nav>
 
             <div class="sidebar-user">

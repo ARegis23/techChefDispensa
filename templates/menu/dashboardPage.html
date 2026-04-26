@@ -30,6 +30,13 @@ Painel principal de acesso às funcionalidades do sistema.
         </span>
     </a>
 
+    <a class="dashboard-button" href="{{ url_for('web.importacao_list') }}">
+        <span class="dashboard-button-title">Importações</span>
+        <span class="dashboard-button-text">
+            Buscar dados em API externa, revisar e enviar para alimentos.
+        </span>
+    </a>
+
     <a class="dashboard-button" href="{{ url_for('web.usuario_list') }}">
         <span class="dashboard-button-title">Usuários</span>
         <span class="dashboard-button-text">

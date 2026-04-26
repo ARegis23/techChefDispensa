@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Importação - TechChef Dispensa{% endblock %}
+
+{% block page_title %}Nova importação{% endblock %}
+
+{% block page_subtitle %}
+Informe um código de barras para buscar dados em uma API externa.
+{% endblock %}
+
+{% block content %}
+
+<section>
+
+    <p>
+        <a href="{{ url_for('web.importacao_list') }}">
+            ← Voltar para importações
+        </a>
+    </p>
+
+    <h2>Importar dados por código de barras</h2>
+
+    <p>
+        O sistema consultará uma API externa usando o módulo Requests no backend.
+        O resultado será salvo na coleção de importações.
+    </p>
+
+    <form method="POST" action="{{ url_for('web.importacao_add') }}">
+
+        <div>
+            <label for="barcode">Código de barras</label><br>
+
+            <input
+                type="text"
+                id="barcode"
+                name="barcode"
+                placeholder="Ex: 7896038306039"
+                required
+            >
+        </div>
+
+        <br>
+
+        <button type="submit">
+            Importar dados
+        </button>
+
+        <a href="{{ url_for('web.importacao_list') }}">
+            Cancelar
+        </a>
+
+    </form>
+
+</section>
+
+{% endblock %}

@@ -124,7 +124,8 @@ def montar_dados_exportacao(usuario_logado):
             "admin_uid": admin_uid
         },
         "usuarios": listar_usuarios_exportacao(admin_uid),
-        "alimentos": listar_alimentos_exportacao(admin_uid)
+        "alimentos": listar_alimentos_exportacao(admin_uid),
+        "importacoes": listar_importacoes_exportacao(admin_uid)
     }
 
     return dados_exportacao
@@ -143,3 +144,24 @@ def gerar_json_exportacao(usuario_logado):
         indent=4,
         default=_converter_valor_json
     )
+
+def listar_importacoes_exportacao(admin_uid):
+    """
+    Lista todas as importações do grupo para exportação.
+    """
+
+    docs = (
+        db.collection("contas")
+        .document(admin_uid)
+        .collection("importacoes")
+        .stream()
+    )
+
+    importacoes = []
+
+    for doc in docs:
+        dados = doc.to_dict()
+        dados["id"] = doc.id
+        importacoes.append(dados)
+
+    return importacoes
