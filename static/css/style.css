@@ -1,33 +1,182 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f8f8f8;
-    color: #222;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-header {
-    background-color: #263238;
-    color: white;
-    padding: 16px 32px;
+/* =========================
+   ÁREA PÚBLICA
+========================= */
+
+.public-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid #ddd;
 }
 
-header h1 {
+.public-header h1 {
     margin: 0 0 8px 0;
 }
 
-nav a {
-    color: white;
+.public-header nav a {
     margin-right: 16px;
-    text-decoration: none;
 }
 
-main {
+.public-content {
     padding: 32px;
 }
 
-section {
-    background-color: white;
+/* =========================
+   MENU LATERAL
+========================= */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 240px;
+    height: 100vh;
+
     padding: 24px;
+
+    border-right: 1px solid #ddd;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-logo h2 {
+    margin: 0;
+}
+
+.sidebar-logo p {
+    margin: 4px 0 0 0;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    margin-top: 32px;
+}
+
+.sidebar-menu a,
+.sidebar-footer a {
+    display: block;
+
+    padding: 12px;
+
+    border: 1px solid #ddd;
     border-radius: 8px;
-    max-width: 800px;
+
+    text-decoration: none;
+}
+
+.sidebar-user {
+    margin-top: auto;
+    padding-top: 16px;
+
+    border-top: 1px solid #ddd;
+}
+
+.sidebar-user p {
+    margin: 0 0 4px 0;
+}
+
+.sidebar-footer {
+    margin-top: 16px;
+}
+
+/* =========================
+   CONTEÚDO INTERNO
+========================= */
+
+.app-layout {
+    margin-left: 240px;
+    min-height: 100vh;
+    padding: 24px;
+}
+
+.page-header {
+    padding: 20px;
+    margin-bottom: 24px;
+
+    border: 1px solid #ddd;
+    border-radius: 12px;
+}
+
+.page-header h1 {
+    margin: 0;
+}
+
+.page-header p {
+    margin: 6px 0 0 0;
+}
+
+.page-content {
+    max-width: 1100px;
+}
+
+/* =========================
+   MENSAGENS
+========================= */
+
+.messages {
+    margin-bottom: 20px;
+}
+
+.message {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard-welcome {
+    margin-bottom: 24px;
+}
+
+.dashboard-welcome h2 {
+    margin-top: 0;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.dashboard-button {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    min-height: 150px;
+
+    padding: 24px;
+
+    border: 1px solid #ddd;
+    border-radius: 14px;
+
+    text-decoration: none;
+}
+
+.dashboard-button:hover {
+    transform: translateY(-2px);
+}
+
+.dashboard-button-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.dashboard-button-text {
+    line-height: 1.4;
 }

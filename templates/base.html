@@ -4,53 +4,98 @@
     <meta charset="UTF-8">
 
     <title>{% block title %}TechChef Dispensa{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
 
-    <header>
-        <h1>TechChef Dispensa</h1>
+<body class="{% if session.get('usuario') %}body-app{% else %}body-public{% endif %}">
 
-        <nav>
-            {% if session.get("usuario") %}
-                <a href="{{ url_for('web.dashboard') }}">Dashboard</a>
-                <a href="{{ url_for('web.alimento_list') }}">Alimentos</a>
-                <a href="{{ url_for('web.usuario_list') }}">Usuários</a>
-                <a href="{{ url_for('web.configuracoes') }}">Configurações</a>
-                <a href="{{ url_for('web.logout') }}">Sair</a>
-            {% else %}
+    {% if session.get("usuario") %}
+
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>TechChef</h2>
+                <p>Dispensa</p>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="{{ url_for('web.dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('web.alimento_list') }}">
+                    Alimentos
+                </a>
+
+                <a href="{{ url_for('web.usuario_list') }}">
+                    Usuários
+                </a>
+
+                <a href="{{ url_for('web.configuracoes') }}">
+                    Configurações
+                </a>
+            </nav>
+
+            <div class="sidebar-user">
+                <p>
+                    <strong>{{ session["usuario"]["nome"] }}</strong>
+                </p>
+
+                <small>
+                    {{ session["usuario"]["email"] }}
+                </small>
+            </div>
+
+            <div class="sidebar-footer">
+                <a href="{{ url_for('web.logout') }}">
+                    Sair
+                </a>
+            </div>
+        </aside>
+
+    {% else %}
+
+        <header class="public-header">
+            <h1>TechChef Dispensa</h1>
+
+            <nav>
                 <a href="{{ url_for('web.login') }}">Login</a>
                 <a href="{{ url_for('web.sobre') }}">Sobre</a>
-            {% endif %}
-        </nav>
+            </nav>
+        </header>
+
+    {% endif %}
+
+
+    <section class="{% if session.get('usuario') %}app-layout{% else %}public-content{% endif %}">
 
         {% if session.get("usuario") %}
-            <p>
-                Usuário logado:
-                {{ session["usuario"]["nome"] }}
-                -
-                {{ session["usuario"]["email"] }}
-            </p>
+            <header class="page-header">
+                <div>
+                    <h1>{% block page_title %}TechChef Dispensa{% endblock %}</h1>
+                    <p>{% block page_subtitle %}{% endblock %}</p>
+                </div>
+            </header>
         {% endif %}
-    </header>
 
-    <hr>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <section class="messages">
+                    {% for category, message in messages %}
+                        <p class="message message-{{ category }}">
+                            <strong>{{ category }}:</strong>
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% endwith %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <section>
-                {% for category, message in messages %}
-                    <p>
-                        <strong>{{ category }}:</strong>
-                        {{ message }}
-                    </p>
-                {% endfor %}
-            </section>
-        {% endif %}
-    {% endwith %}
+        <main class="page-content">
+            {% block content %}{% endblock %}
+        </main>
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    </section>
 
 </body>
 </html>

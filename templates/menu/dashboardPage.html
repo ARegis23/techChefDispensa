@@ -2,32 +2,48 @@
 
 {% block title %}Dashboard - TechChef Dispensa{% endblock %}
 
+{% block page_title %}Dashboard{% endblock %}
+
+{% block page_subtitle %}
+Painel principal de acesso às funcionalidades do sistema.
+{% endblock %}
+
 {% block content %}
 
-<h2>Dashboard</h2>
+<section class="dashboard-welcome">
 
-<p>
-    Bem-vindo ao painel principal do TechChef Dispensa.
-</p>
+    <h2>Bem-vindo ao TechChef Dispensa</h2>
 
-<ul>
-    <li>
-        <a href="{{ url_for('web.alimento_list') }}">
-            Gerenciar alimentos
-        </a>
-    </li>
+    <p>
+        Use o menu lateral para navegar pelo sistema ou acesse diretamente
+        uma das áreas principais abaixo.
+    </p>
 
-    <li>
-        <a href="{{ url_for('web.usuario_list') }}">
-            Gerenciar usuários
-        </a>
-    </li>
+</section>
 
-    <li>
-        <a href="{{ url_for('web.configuracoes') }}">
-            Configurações
-        </a>
-    </li>
-</ul>
+<section class="dashboard-grid">
+
+    <a class="dashboard-button" href="{{ url_for('web.alimento_list') }}">
+        <span class="dashboard-button-title">Alimentos</span>
+        <span class="dashboard-button-text">
+            Cadastrar, listar e editar alimentos disponíveis no sistema.
+        </span>
+    </a>
+
+    <a class="dashboard-button" href="{{ url_for('web.usuario_list') }}">
+        <span class="dashboard-button-title">Usuários</span>
+        <span class="dashboard-button-text">
+            Gerenciar usuários vinculados à conta principal.
+        </span>
+    </a>
+
+    <a class="dashboard-button" href="{{ url_for('web.configuracoes') }}">
+        <span class="dashboard-button-title">Configurações</span>
+        <span class="dashboard-button-text">
+            Acessar preferências e ajustes iniciais da aplicação.
+        </span>
+    </a>
+
+</section>
 
 {% endblock %}
