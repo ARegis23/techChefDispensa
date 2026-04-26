@@ -1,4 +1,7 @@
 from functools import wraps
+from io import BytesIO
+from zipfile import ZipFile, ZIP_DEFLATED
+from datetime import datetime
 
 from flask import (
     Blueprint,
@@ -8,7 +11,8 @@ from flask import (
     url_for,
     session,
     flash,
-    jsonify
+    jsonify,
+    send_file
 )
 
 from services.auth_service import verificar_token_firebase
@@ -36,6 +40,8 @@ from services.alimento_service import (
     deletar_alimento,
     montar_dados_alimento
 )
+
+from services.export_service import gerar_json_exportacao
 
 web_bp = Blueprint("web", __name__)
 
@@ -473,3 +479,53 @@ def usuario_edit(uid):
         usuario_logado=usuario_logado,
         pode_deletar=pode_deletar
     )
+
+# Rotas para exportação de dados
+@web_bp.route("/menu/configuracoes/exportar-json")
+@login_required
+def exportar_json_zip():
+    """
+    Exporta os dados do grupo em JSON compactado em ZIP.
+
+    Exporta:
+    - usuários vinculados ao admin_uid
+    - alimentos cadastrados no grupo
+    """
+
+    usuario_logado = session.get("usuario")
+
+    if not usuario_logado:
+        flash("Usuário não autenticado.", "danger")
+        return redirect(url_for("web.login"))
+
+    # Recomendação: exportação completa apenas para admin.
+    # Se quiser liberar para membros também, remova este bloco.
+    if usuario_logado.get("papel") != "admin":
+        flash("Apenas o administrador pode exportar todos os dados do grupo.", "danger")
+        return redirect(url_for("web.configuracoes"))
+
+    try:
+        json_exportado = gerar_json_exportacao(usuario_logado)
+
+        memoria_zip = BytesIO()
+
+        data_arquivo = datetime.now().strftime("%Y%m%d_%H%M%S")
+        nome_json = f"dados_techchef_{data_arquivo}.json"
+        nome_zip = f"exportacao_techchef_{data_arquivo}.zip"
+
+        with ZipFile(memoria_zip, mode="w", compression=ZIP_DEFLATED) as arquivo_zip:
+            arquivo_zip.writestr(nome_json, json_exportado)
+
+        memoria_zip.seek(0)
+
+        return send_file(
+            memoria_zip,
+            mimetype="application/zip",
+            as_attachment=True,
+            download_name=nome_zip
+        )
+
+    except Exception as erro:
+        print("Erro ao exportar dados:", erro)
+        flash("Não foi possível exportar os dados da aplicação.", "danger")
+        return redirect(url_for("web.configuracoes"))

@@ -173,4 +173,48 @@ Preferências pessoais, acessibilidade e permissões disponíveis no sistema.
 
 <hr>
 
+<hr>
+
+<section>
+
+    <h3>Exportação de dados</h3>
+
+    <p>
+        Esta funcionalidade exporta os dados disponíveis da aplicação
+        em formato <strong>JSON</strong> e compacta o arquivo no formato
+        <strong>ZIP</strong>.
+    </p>
+
+    <p>
+        A exportação inclui:
+    </p>
+
+    <ul>
+        <li>Usuários vinculados à conta principal</li>
+        <li>Alimentos cadastrados pelo grupo</li>
+        <li>Metadados da exportação</li>
+    </ul>
+
+    {% if usuario_logado.papel == "admin" %}
+
+        <p>
+            Como administrador, você pode exportar os dados do grupo.
+        </p>
+
+        <p>
+            <a href="{{ url_for('web.exportar_json_zip') }}">
+                Exportar dados em JSON compactado ZIP
+            </a>
+        </p>
+
+    {% else %}
+
+        <p>
+            Apenas o administrador pode exportar todos os dados do grupo.
+        </p>
+
+    {% endif %}
+
+</section>
+
 {% endblock %}

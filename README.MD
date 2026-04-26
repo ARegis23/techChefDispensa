@@ -262,6 +262,30 @@ O sistema trabalha inicialmente com dois papéis:
 - Não pode editar outros usuários.
 - Não pode deletar usuários.
 
+## Exportação de dados
+
+O sistema possui uma funcionalidade de exportação dos dados da aplicação.
+
+### Formato
+
+- Os dados são exportados no formato JSON.
+- O arquivo JSON é compactado no formato ZIP.
+
+### Dados exportados
+
+- Metadados da exportação.
+- Usuários vinculados à conta principal.
+- Alimentos cadastrados pelo grupo.
+
+### Permissão
+
+- Apenas o usuário administrador pode exportar todos os dados do grupo.
+
+### Rota
+
+`/menu/configuracoes/exportar-json`
+
+
 -------------------------------------------------
 -------------------------------------------------
 -------------------------------------------------
