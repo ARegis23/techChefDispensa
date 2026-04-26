@@ -4,36 +4,100 @@
 
 {% block content %}
 
-<h2>Lista de Usuários</h2>
+<p>
+    <a href="{{ url_for('web.dashboard') }}">← Voltar para o dashboard</a>
+</p>
+
+<h2>Usuários da conta</h2>
+
+{% if usuario_logado.papel == "admin" %}
+    <p>
+        <a href="{{ url_for('web.usuario_add') }}">
+            Adicionar novo usuário
+        </a>
+    </p>
+{% endif %}
+
+<hr>
+
+<h3>Administrador principal</h3>
+
+{% if admin %}
+    <table border="1" cellpadding="8">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Papel</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>{{ admin.nome }}</td>
+                <td>{{ admin.email }}</td>
+                <td>Admin</td>
+                <td>
+                    {% if usuario_logado.papel == "admin" or usuario_logado.uid == admin.uid %}
+                        <a href="{{ url_for('web.usuario_edit', uid=admin.uid) }}">
+                            Editar
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% else %}
+    <p>Nenhum administrador encontrado.</p>
+{% endif %}
+
+<br>
+
+<h3>Usuários vinculados</h3>
 
 <table border="1" cellpadding="8">
     <thead>
         <tr>
             <th>Nome</th>
             <th>E-mail</th>
+            <th>Papel</th>
             <th>Ações</th>
         </tr>
     </thead>
 
     <tbody>
-        {% for usuario in usuarios %}
+        {% for usuario in membros %}
             <tr>
                 <td>{{ usuario.nome }}</td>
                 <td>{{ usuario.email }}</td>
+                <td>Membro</td>
                 <td>
-                    <a href="{{ url_for('web.usuario_edit', usuario_id=usuario.id) }}">
-                        Editar
-                    </a>
+                    {% if usuario_logado.papel == "admin" or usuario_logado.uid == usuario.uid %}
+                        <a href="{{ url_for('web.usuario_edit', uid=usuario.uid) }}">
+                            Editar
+                        </a>
+                    {% else %}
+                        Apenas visualização
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="3">
-                    Nenhum usuário cadastrado.
+                <td colspan="4">
+                    Nenhum usuário vinculado ainda.
                 </td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<br>
+
+<p>
+    <a href="{{ url_for('web.dashboard') }}">← Voltar</a>
+</p>
 
 {% endblock %}

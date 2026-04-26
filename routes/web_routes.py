@@ -12,6 +12,16 @@ from flask import (
 )
 
 from services.auth_service import verificar_token_firebase
+from services.usuario_service import garantir_usuario_logado
+from services.usuario_service import (
+    listar_usuarios_da_conta,
+    buscar_usuario_por_uid,
+    criar_usuario_membro,
+    atualizar_usuario,
+    deletar_usuario,
+    pode_editar_usuario,
+    pode_deletar_usuario
+)
 
 web_bp = Blueprint("web", __name__)
 
@@ -80,11 +90,15 @@ def session_login():
                 "erro": "Usuário inválido."
             }), 401
 
+        usuario_firestore = garantir_usuario_logado(usuario)
+
         session["usuario"] = {
-            "uid": usuario.get("uid"),
-            "nome": usuario.get("nome"),
-            "email": usuario.get("email"),
-            "foto": usuario.get("foto")
+            "uid": usuario_firestore.get("uid"),
+            "nome": usuario_firestore.get("nome"),
+            "email": usuario_firestore.get("email"),
+            "foto": usuario_firestore.get("foto"),
+            "papel": usuario_firestore.get("papel"),
+            "admin_uid": usuario_firestore.get("admin_uid")
         }
 
         return jsonify({
@@ -207,47 +221,132 @@ def alimento_edit(alimento_id):
 @web_bp.route("/menu/usuarios")
 @login_required
 def usuario_list():
-    usuarios = [
-        {
-            "id": "1",
-            "nome": "Regis",
-            "email": "regis@email.com"
-        }
-    ]
+    usuario_logado = session.get("usuario")
+
+    admin, membros = listar_usuarios_da_conta(usuario_logado)
 
     return render_template(
         "menu/usuarios/usuarioListPage.html",
-        usuarios=usuarios
+        admin=admin,
+        membros=membros,
+        usuario_logado=usuario_logado
     )
 
 
-@web_bp.route("/menu/usuarios/editar/<usuario_id>", methods=["GET", "POST"])
+@web_bp.route("/menu/usuarios/adicionar", methods=["GET", "POST"])
 @login_required
-def usuario_edit(usuario_id):
-    usuario = {
-        "id": usuario_id,
-        "nome": session["usuario"]["nome"],
-        "email": session["usuario"]["email"]
-    }
+def usuario_add():
+    usuario_logado = session.get("usuario")
+
+    if usuario_logado.get("papel") != "admin":
+        flash("Apenas o administrador pode adicionar usuários.", "danger")
+        return redirect(url_for("web.usuario_list"))
 
     if request.method == "POST":
-        nome = request.form.get("nome")
-        email = request.form.get("email")
+        nome = request.form.get("nome", "").strip()
+        email = request.form.get("email", "").strip()
+        senha = request.form.get("senha", "")
 
-        print("Usuário editado:")
-        print("ID:", usuario_id)
-        print("Nome:", nome)
-        print("Email:", email)
+        if not nome or not email or not senha:
+            flash("Informe nome, e-mail e senha.", "danger")
+            return redirect(url_for("web.usuario_add"))
 
-        session["usuario"] = {
-            "nome": nome,
-            "email": email
-        }
+        if len(senha) < 6:
+            flash("A senha deve ter pelo menos 6 caracteres.", "danger")
+            return redirect(url_for("web.usuario_add"))
 
-        flash("Usuário atualizado temporariamente.", "success")
+        try:
+            criar_usuario_membro(usuario_logado, nome, email, senha)
+
+            flash("Usuário adicionado com sucesso.", "success")
+            return redirect(url_for("web.usuario_list"))
+
+        except Exception as erro:
+            print("Erro ao criar usuário:", erro)
+            flash("Não foi possível criar o usuário. Verifique os dados informados.", "danger")
+            return redirect(url_for("web.usuario_add"))
+
+    return render_template("menu/usuarios/usuarioAddPage.html")
+
+
+@web_bp.route("/menu/usuarios/editar/<uid>", methods=["GET", "POST"])
+@login_required
+def usuario_edit(uid):
+    usuario_logado = session.get("usuario")
+
+    if not pode_editar_usuario(usuario_logado, uid):
+        flash("Você só pode editar o seu próprio cadastro.", "danger")
         return redirect(url_for("web.usuario_list"))
+
+    usuario = buscar_usuario_por_uid(uid)
+
+    if not usuario:
+        flash("Usuário não encontrado.", "danger")
+        return redirect(url_for("web.usuario_list"))
+
+    if usuario.get("admin_uid") != usuario_logado.get("admin_uid"):
+        flash("Usuário não pertence à sua conta.", "danger")
+        return redirect(url_for("web.usuario_list"))
+
+    if request.method == "POST":
+        acao = request.form.get("acao")
+
+        if acao == "cancelar":
+            return redirect(url_for("web.usuario_list"))
+
+        if acao == "deletar":
+            if not pode_deletar_usuario(usuario_logado, uid):
+                flash("Você não tem permissão para deletar este usuário.", "danger")
+                return redirect(url_for("web.usuario_edit", uid=uid))
+
+            try:
+                deletar_usuario(usuario_logado, uid)
+                flash("Usuário deletado com sucesso.", "success")
+                return redirect(url_for("web.usuario_list"))
+
+            except Exception as erro:
+                print("Erro ao deletar usuário:", erro)
+                flash("Não foi possível deletar o usuário.", "danger")
+                return redirect(url_for("web.usuario_edit", uid=uid))
+
+        nome = request.form.get("nome", "").strip()
+        email = request.form.get("email", "").strip()
+        senha = request.form.get("senha", "")
+
+        if not nome or not email:
+            flash("Nome e e-mail são obrigatórios.", "danger")
+            return redirect(url_for("web.usuario_edit", uid=uid))
+
+        if senha and len(senha) < 6:
+            flash("A nova senha deve ter pelo menos 6 caracteres.", "danger")
+            return redirect(url_for("web.usuario_edit", uid=uid))
+
+        try:
+            usuario_atualizado = atualizar_usuario(
+                usuario_logado=usuario_logado,
+                uid_alvo=uid,
+                nome=nome,
+                email=email,
+                senha=senha if senha else None
+            )
+
+            if usuario_logado.get("uid") == uid:
+                session["usuario"]["nome"] = usuario_atualizado.get("nome")
+                session["usuario"]["email"] = usuario_atualizado.get("email")
+
+            flash("Usuário atualizado com sucesso.", "success")
+            return redirect(url_for("web.usuario_list"))
+
+        except Exception as erro:
+            print("Erro ao atualizar usuário:", erro)
+            flash("Não foi possível atualizar o usuário.", "danger")
+            return redirect(url_for("web.usuario_edit", uid=uid))
+
+    pode_deletar = pode_deletar_usuario(usuario_logado, uid)
 
     return render_template(
         "menu/usuarios/usuarioEditPage.html",
-        usuario=usuario
+        usuario=usuario,
+        usuario_logado=usuario_logado,
+        pode_deletar=pode_deletar
     )

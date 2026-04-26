@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Usuário - TechChef Dispensa{% endblock %}
+
+{% block content %}
+
+<p>
+    <a href="{{ url_for('web.usuario_list') }}">← Voltar para usuários</a>
+</p>
+
+<h2>Adicionar novo usuário</h2>
+
+<p>
+    Este usuário será vinculado à conta principal do administrador.
+</p>
+
+<form method="POST" action="{{ url_for('web.usuario_add') }}">
+
+    <div>
+        <label for="nome">Nome</label><br>
+        <input
+            type="text"
+            id="nome"
+            name="nome"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label for="email">E-mail</label><br>
+        <input
+            type="email"
+            id="email"
+            name="email"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label for="senha">Senha provisória</label><br>
+        <input
+            type="password"
+            id="senha"
+            name="senha"
+            minlength="6"
+            required
+        >
+    </div>
+
+    <br>
+
+    <button type="submit">
+        Adicionar usuário
+    </button>
+
+    <a href="{{ url_for('web.usuario_list') }}">
+        Cancelar
+    </a>
+
+</form>
+
+{% endblock %}
