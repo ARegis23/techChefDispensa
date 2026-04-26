@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Usuários - TechChef Dispensa{% endblock %}
+
+{% block content %}
+
+<h2>Lista de Usuários</h2>
+
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.nome }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>
+                    <a href="{{ url_for('web.usuario_edit', usuario_id=usuario.id) }}">
+                        Editar
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">
+                    Nenhum usuário cadastrado.
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - TechChef Dispensa{% endblock %}
+
+{% block content %}
+
+<h2>Dashboard</h2>
+
+<p>
+    Bem-vindo ao painel principal do TechChef Dispensa.
+</p>
+
+<ul>
+    <li>
+        <a href="{{ url_for('web.alimento_list') }}">
+            Gerenciar alimentos
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ url_for('web.usuario_list') }}">
+            Gerenciar usuários
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ url_for('web.configuracoes') }}">
+            Configurações
+        </a>
+    </li>
+</ul>
+
+{% endblock %}

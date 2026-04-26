@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Alimentos - TechChef Dispensa{% endblock %}
+
+{% block content %}
+
+<h2>Lista de Alimentos</h2>
+
+<p>
+    <a href="{{ url_for('web.alimento_add') }}">
+        Adicionar novo alimento
+    </a>
+</p>
+
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Categoria</th>
+            <th>Unidade</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for alimento in alimentos %}
+            <tr>
+                <td>{{ alimento.nome }}</td>
+                <td>{{ alimento.categoria }}</td>
+                <td>{{ alimento.unidade }}</td>
+                <td>
+                    <a href="{{ url_for('web.alimento_edit', alimento_id=alimento.id) }}">
+                        Editar
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">
+                    Nenhum alimento cadastrado.
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

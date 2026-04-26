@@ -2,24 +2,55 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}TechChef Dispensa{% endblock %}</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>{% block title %}TechChef Dispensa{% endblock %}</title>
 </head>
 <body>
 
     <header>
         <h1>TechChef Dispensa</h1>
+
         <nav>
-            <a href="/">Início</a>
-            <a href="/teste-firebase">Teste Firebase</a>
+            {% if session.get("usuario") %}
+                <a href="{{ url_for('web.dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('web.alimento_list') }}">Alimentos</a>
+                <a href="{{ url_for('web.usuario_list') }}">Usuários</a>
+                <a href="{{ url_for('web.configuracoes') }}">Configurações</a>
+                <a href="{{ url_for('web.logout') }}">Sair</a>
+            {% else %}
+                <a href="{{ url_for('web.login') }}">Login</a>
+                <a href="{{ url_for('web.sobre') }}">Sobre</a>
+            {% endif %}
         </nav>
+
+        {% if session.get("usuario") %}
+            <p>
+                Usuário logado:
+                {{ session["usuario"]["nome"] }}
+                -
+                {{ session["usuario"]["email"] }}
+            </p>
+        {% endif %}
     </header>
+
+    <hr>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section>
+                {% for category, message in messages %}
+                    <p>
+                        <strong>{{ category }}:</strong>
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            </section>
+        {% endif %}
+    {% endwith %}
 
     <main>
         {% block content %}{% endblock %}
     </main>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

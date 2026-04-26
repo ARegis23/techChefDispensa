@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Usuário - TechChef Dispensa{% endblock %}
+
+{% block content %}
+
+<h2>Editar Usuário</h2>
+
+<form method="POST" action="{{ url_for('web.usuario_edit', usuario_id=usuario.id) }}">
+    <div>
+        <label for="nome">Nome</label>
+        <input
+            type="text"
+            id="nome"
+            name="nome"
+            value="{{ usuario.nome }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label for="email">E-mail</label>
+        <input
+            type="email"
+            id="email"
+            name="email"
+            value="{{ usuario.email }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <button type="submit">
+        Atualizar
+    </button>
+
+    <a href="{{ url_for('web.usuario_list') }}">
+        Cancelar
+    </a>
+</form>
+
+{% endblock %}

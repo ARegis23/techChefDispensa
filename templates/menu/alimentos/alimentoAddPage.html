@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Alimento - TechChef Dispensa{% endblock %}
+
+{% block content %}
+
+<h2>Adicionar Alimento</h2>
+
+<form method="POST" action="{{ url_for('web.alimento_add') }}">
+    <div>
+        <label for="nome">Nome do alimento</label>
+        <input
+            type="text"
+            id="nome"
+            name="nome"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label for="categoria">Categoria</label>
+        <input
+            type="text"
+            id="categoria"
+            name="categoria"
+            placeholder="Ex: cereal, leguminosa, proteína"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label for="unidade">Unidade</label>
+        <input
+            type="text"
+            id="unidade"
+            name="unidade"
+            placeholder="Ex: kg, g, unidade, litro"
+            required
+        >
+    </div>
+
+    <br>
+
+    <button type="submit">
+        Salvar
+    </button>
+
+    <a href="{{ url_for('web.alimento_list') }}">
+        Cancelar
+    </a>
+</form>
+
+{% endblock %}

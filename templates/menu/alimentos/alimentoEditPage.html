@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Alimento - TechChef Dispensa{% endblock %}
+
+{% block content %}
+
+<h2>Editar Alimento</h2>
+
+<form method="POST" action="{{ url_for('web.alimento_edit', alimento_id=alimento.id) }}">
+    <div>
+        <label for="nome">Nome do alimento</label>
+        <input
+            type="text"
+            id="nome"
+            name="nome"
+            value="{{ alimento.nome }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label for="categoria">Categoria</label>
+        <input
+            type="text"
+            id="categoria"
+            name="categoria"
+            value="{{ alimento.categoria }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label for="unidade">Unidade</label>
+        <input
+            type="text"
+            id="unidade"
+            name="unidade"
+            value="{{ alimento.unidade }}"
+            required
+        >
+    </div>
+
+    <br>
+
+    <button type="submit">
+        Atualizar
+    </button>
+
+    <a href="{{ url_for('web.alimento_list') }}">
+        Cancelar
+    </a>
+</form>
+
+{% endblock %}

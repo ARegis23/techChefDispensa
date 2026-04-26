@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Login - TechChef Dispensa{% endblock %}
+
+{% block content %}
+
+<h2>Login</h2>
+
+<p>
+    Acesse o sistema para gerenciar alimentos, usuários e configurações.
+</p>
+
+<form method="POST" action="{{ url_for('web.login') }}">
+    <div>
+        <label for="nome">Nome</label>
+        <input
+            type="text"
+            id="nome"
+            name="nome"
+            required
+        >
+    </div>
+
+    <br>
+
+    <div>
+        <label for="email">E-mail</label>
+        <input
+            type="email"
+            id="email"
+            name="email"
+            required
+        >
+    </div>
+
+    <br>
+
+    <button type="submit">
+        Entrar
+    </button>
+</form>
+
+<p>
+    <small>
+        Login temporário apenas para testar o fluxo entre páginas.
+    </small>
+</p>
+
+{% endblock %}
