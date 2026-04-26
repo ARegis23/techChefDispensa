@@ -56,12 +56,12 @@ def session_login():
     """
 
     try:
-        dados = request.get_json()
+        dados = request.get_json(silent=True)
 
         if not dados:
             return jsonify({
                 "ok": False,
-                "erro": "Requisição sem JSON."
+                "erro": "Dados da requisição não foram enviados corretamente."
             }), 400
 
         id_token = dados.get("idToken")
@@ -69,16 +69,22 @@ def session_login():
         if not id_token:
             return jsonify({
                 "ok": False,
-                "erro": "Token não enviado."
+                "erro": "Token de autenticação não enviado."
             }), 400
 
         usuario = verificar_token_firebase(id_token)
 
+        if not usuario.get("uid"):
+            return jsonify({
+                "ok": False,
+                "erro": "Usuário inválido."
+            }), 401
+
         session["usuario"] = {
-            "uid": usuario["uid"],
-            "nome": usuario["nome"],
-            "email": usuario["email"],
-            "foto": usuario["foto"]
+            "uid": usuario.get("uid"),
+            "nome": usuario.get("nome"),
+            "email": usuario.get("email"),
+            "foto": usuario.get("foto")
         }
 
         return jsonify({
@@ -86,12 +92,20 @@ def session_login():
             "redirect": url_for("web.dashboard")
         })
 
-    except Exception as erro:
-        print("Erro ao validar token Firebase:", erro)
+    except ValueError as erro:
+        print("Token malformado:", erro)
 
         return jsonify({
             "ok": False,
-            "erro": "Token inválido ou expirado."
+            "erro": "Token inválido."
+        }), 401
+
+    except Exception as erro:
+        print("Erro ao validar autenticação:", erro)
+
+        return jsonify({
+            "ok": False,
+            "erro": "Não foi possível validar sua autenticação. Tente entrar novamente."
         }), 401
 
 
