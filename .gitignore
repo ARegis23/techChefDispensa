@@ -1,6 +1,10 @@
-.env
-secrets/
+.venv/
 __pycache__/
 *.pyc
-exports/
-node_modules/
+
+.env
+secrets/
+serviceAccountKey.json
+
+instance/
+.env.*
