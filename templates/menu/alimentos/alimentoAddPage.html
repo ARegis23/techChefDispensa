@@ -2,56 +2,205 @@
 
 {% block title %}Adicionar Alimento - TechChef Dispensa{% endblock %}
 
+{% block page_title %}Adicionar alimento{% endblock %}
+
+{% block page_subtitle %}
+Busque pelo código de barras ou preencha os dados manualmente.
+{% endblock %}
+
 {% block content %}
 
-<h2>Adicionar Alimento</h2>
-
-<form method="POST" action="{{ url_for('web.alimento_add') }}">
-    <div>
-        <label for="nome">Nome do alimento</label>
-        <input
-            type="text"
-            id="nome"
-            name="nome"
-            required
-        >
-    </div>
-
-    <br>
-
-    <div>
-        <label for="categoria">Categoria</label>
-        <input
-            type="text"
-            id="categoria"
-            name="categoria"
-            placeholder="Ex: cereal, leguminosa, proteína"
-            required
-        >
-    </div>
-
-    <br>
-
-    <div>
-        <label for="unidade">Unidade</label>
-        <input
-            type="text"
-            id="unidade"
-            name="unidade"
-            placeholder="Ex: kg, g, unidade, litro"
-            required
-        >
-    </div>
-
-    <br>
-
-    <button type="submit">
-        Salvar
-    </button>
-
+<p>
     <a href="{{ url_for('web.alimento_list') }}">
-        Cancelar
+        ← Voltar para alimentos
     </a>
-</form>
+</p>
+
+<section>
+    <h2>Buscar por código de barras</h2>
+
+    <form method="GET" action="{{ url_for('web.alimento_add') }}">
+        <label for="barcode_busca">Código de barras</label><br>
+
+        <input
+            type="text"
+            id="barcode_busca"
+            name="barcode"
+            value="{{ alimento.barcode if alimento else '' }}"
+            placeholder="Ex: 7890000000000"
+            required
+        >
+
+        <button type="submit">
+            Buscar dados
+        </button>
+    </form>
+</section>
+
+<hr>
+
+<section>
+    <h2>Dados do alimento</h2>
+
+    <form method="POST" action="{{ url_for('web.alimento_add') }}">
+
+        <input
+            type="hidden"
+            name="origem_dados"
+            value="{{ alimento.origem_dados if alimento else 'manual' }}"
+        >
+
+        <div>
+            <label for="barcode">Barcode</label><br>
+            <input
+                type="text"
+                id="barcode"
+                name="barcode"
+                value="{{ alimento.barcode if alimento else '' }}"
+                required
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="nome">Nome</label><br>
+            <input
+                type="text"
+                id="nome"
+                name="nome"
+                value="{{ alimento.nome if alimento else '' }}"
+                required
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="marca">Marca</label><br>
+            <input
+                type="text"
+                id="marca"
+                name="marca"
+                value="{{ alimento.marca if alimento else '' }}"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="peso">Peso / quantidade</label><br>
+            <input
+                type="text"
+                id="peso"
+                name="peso"
+                value="{{ alimento.peso if alimento else '' }}"
+                placeholder="Ex: 500g, 1kg, 1L"
+            >
+        </div>
+
+        <br>
+
+        <div>
+            <label for="categoria">Categoria</label><br>
+            <input
+                type="text"
+                id="categoria"
+                name="categoria"
+                value="{{ alimento.categoria if alimento else '' }}"
+            >
+        </div>
+
+        <br>
+
+        <h3>Informações nutricionais por 100g ou 100ml</h3>
+
+        <div>
+            <label for="kcal">Kcal</label><br>
+            <input type="number" step="0.01" id="kcal" name="kcal" value="{{ alimento.kcal if alimento else '' }}">
+        </div>
+
+        <br>
+
+        <div>
+            <label for="carboidratos">Carboidratos</label><br>
+            <input type="number" step="0.01" id="carboidratos" name="carboidratos" value="{{ alimento.carboidratos if alimento else '' }}">
+        </div>
+
+        <br>
+
+        <div>
+            <label for="proteinas">Proteínas</label><br>
+            <input type="number" step="0.01" id="proteinas" name="proteinas" value="{{ alimento.proteinas if alimento else '' }}">
+        </div>
+
+        <br>
+
+        <div>
+            <label for="fibras">Fibras</label><br>
+            <input type="number" step="0.01" id="fibras" name="fibras" value="{{ alimento.fibras if alimento else '' }}">
+        </div>
+
+        <br>
+
+        <div>
+            <label for="sodio">Sódio mg</label><br>
+            <input type="number" step="0.01" id="sodio" name="sodio" value="{{ alimento.sodio if alimento else '' }}">
+        </div>
+
+        <br>
+
+        <div>
+            <label for="gorduras_totais">Gorduras totais</label><br>
+            <input type="number" step="0.01" id="gorduras_totais" name="gorduras_totais" value="{{ alimento.gorduras_totais if alimento else '' }}">
+        </div>
+
+        <br>
+
+        <div>
+            <label for="gorduras_saturadas">Gorduras saturadas</label><br>
+            <input type="number" step="0.01" id="gorduras_saturadas" name="gorduras_saturadas" value="{{ alimento.gorduras_saturadas if alimento else '' }}">
+        </div>
+
+        <br>
+
+        <div>
+            <label for="gorduras_trans">Gorduras trans</label><br>
+            <input type="number" step="0.01" id="gorduras_trans" name="gorduras_trans" value="{{ alimento.gorduras_trans if alimento else '' }}">
+        </div>
+
+        <br>
+
+        <div>
+            <label for="acucares_totais">Açúcares totais</label><br>
+            <input type="number" step="0.01" id="acucares_totais" name="acucares_totais" value="{{ alimento.acucares_totais if alimento else '' }}">
+        </div>
+
+        <br>
+
+        <div>
+            <label for="acucares_adicionados">Açúcares adicionados</label><br>
+            <input type="number" step="0.01" id="acucares_adicionados" name="acucares_adicionados" value="{{ alimento.acucares_adicionados if alimento else '' }}">
+        </div>
+
+        <br>
+
+        <div>
+            <label for="alergenos">Alérgenos</label><br>
+            <textarea id="alergenos" name="alergenos" rows="3">{{ alimento.alergenos if alimento else '' }}</textarea>
+        </div>
+
+        <br>
+
+        <button type="submit">
+            Salvar alimento
+        </button>
+
+        <a href="{{ url_for('web.alimento_list') }}">
+            Cancelar
+        </a>
+
+    </form>
+</section>
 
 {% endblock %}

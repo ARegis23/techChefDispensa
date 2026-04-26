@@ -12,43 +12,52 @@
 
     {% if session.get("usuario") %}
 
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <h2>TechChef</h2>
                 <p>Dispensa</p>
             </div>
 
+            <button type="button" class="sidebar-toggle" id="sidebarToggle">
+                 ☰
+            </button>
+
             <nav class="sidebar-menu">
                 <a href="{{ url_for('web.dashboard') }}">
-                    Dashboard
+                    <span class="menu-icon">🏠</span>
+                    <span class="menu-text">Dashboard</span>
                 </a>
 
                 <a href="{{ url_for('web.alimento_list') }}">
-                    Alimentos
+                    <span class="menu-icon">🥫</span>
+                    <span class="menu-text">Alimentos</span>
                 </a>
 
                 <a href="{{ url_for('web.usuario_list') }}">
-                    Usuários
+                    <span class="menu-icon">👥</span>
+                    <span class="menu-text">Usuários</span>
                 </a>
 
                 <a href="{{ url_for('web.configuracoes') }}">
-                    Configurações
+                    <span class="menu-icon">⚙️</span>
+                    <span class="menu-text">Configurações</span>
                 </a>
             </nav>
 
             <div class="sidebar-user">
                 <p>
-                    <strong>{{ session["usuario"]["nome"] }}</strong>
+                    <strong class="menu-text">{{ session["usuario"]["nome"] }}</strong>
                 </p>
 
-                <small>
+                <small class="menu-text">
                     {{ session["usuario"]["email"] }}
                 </small>
             </div>
 
             <div class="sidebar-footer">
                 <a href="{{ url_for('web.logout') }}">
-                    Sair
+                    <span class="menu-icon">🚪</span>
+                    <span class="menu-text">Sair</span>
                 </a>
             </div>
         </aside>
@@ -96,6 +105,8 @@
         </main>
 
     </section>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 </body>
 </html>

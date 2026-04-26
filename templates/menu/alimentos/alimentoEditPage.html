@@ -2,57 +2,161 @@
 
 {% block title %}Editar Alimento - TechChef Dispensa{% endblock %}
 
+{% block page_title %}Editar alimento{% endblock %}
+
+{% block page_subtitle %}
+Atualize, cancele ou delete o alimento selecionado.
+{% endblock %}
+
 {% block content %}
 
-<h2>Editar Alimento</h2>
+<p>
+    <a href="{{ url_for('web.alimento_list') }}">
+        ← Voltar para alimentos
+    </a>
+</p>
 
-<form method="POST" action="{{ url_for('web.alimento_edit', alimento_id=alimento.id) }}">
+<form method="POST" action="{{ url_for('web.alimento_edit', barcode=alimento.barcode) }}">
+
+    <input type="hidden" name="barcode" value="{{ alimento.barcode }}">
+    <input type="hidden" name="origem_dados" value="{{ alimento.origem_dados }}">
+
+    <p>
+        <strong>Barcode:</strong> {{ alimento.barcode }}
+    </p>
+
     <div>
-        <label for="nome">Nome do alimento</label>
-        <input
-            type="text"
-            id="nome"
-            name="nome"
-            value="{{ alimento.nome }}"
-            required
-        >
+        <label for="nome">Nome</label><br>
+        <input type="text" id="nome" name="nome" value="{{ alimento.nome }}" required>
     </div>
 
     <br>
 
     <div>
-        <label for="categoria">Categoria</label>
-        <input
-            type="text"
-            id="categoria"
-            name="categoria"
-            value="{{ alimento.categoria }}"
-            required
-        >
+        <label for="marca">Marca</label><br>
+        <input type="text" id="marca" name="marca" value="{{ alimento.marca }}">
     </div>
 
     <br>
 
     <div>
-        <label for="unidade">Unidade</label>
-        <input
-            type="text"
-            id="unidade"
-            name="unidade"
-            value="{{ alimento.unidade }}"
-            required
-        >
+        <label for="peso">Peso / quantidade</label><br>
+        <input type="text" id="peso" name="peso" value="{{ alimento.peso }}">
     </div>
 
     <br>
 
-    <button type="submit">
+    <div>
+        <label for="categoria">Categoria</label><br>
+        <input type="text" id="categoria" name="categoria" value="{{ alimento.categoria }}">
+    </div>
+
+    <br>
+
+    <h3>Informações nutricionais por 100g ou 100ml</h3>
+
+    <div>
+        <label for="kcal">Kcal</label><br>
+        <input type="number" step="0.01" id="kcal" name="kcal" value="{{ alimento.kcal }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="carboidratos">Carboidratos</label><br>
+        <input type="number" step="0.01" id="carboidratos" name="carboidratos" value="{{ alimento.carboidratos }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="proteinas">Proteínas</label><br>
+        <input type="number" step="0.01" id="proteinas" name="proteinas" value="{{ alimento.proteinas }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="fibras">Fibras</label><br>
+        <input type="number" step="0.01" id="fibras" name="fibras" value="{{ alimento.fibras }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="sodio">Sódio mg</label><br>
+        <input type="number" step="0.01" id="sodio" name="sodio" value="{{ alimento.sodio }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="gorduras_totais">Gorduras totais</label><br>
+        <input type="number" step="0.01" id="gorduras_totais" name="gorduras_totais" value="{{ alimento.gorduras_totais }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="gorduras_saturadas">Gorduras saturadas</label><br>
+        <input type="number" step="0.01" id="gorduras_saturadas" name="gorduras_saturadas" value="{{ alimento.gorduras_saturadas }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="gorduras_trans">Gorduras trans</label><br>
+        <input type="number" step="0.01" id="gorduras_trans" name="gorduras_trans" value="{{ alimento.gorduras_trans }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="acucares_totais">Açúcares totais</label><br>
+        <input type="number" step="0.01" id="acucares_totais" name="acucares_totais" value="{{ alimento.acucares_totais }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="acucares_adicionados">Açúcares adicionados</label><br>
+        <input type="number" step="0.01" id="acucares_adicionados" name="acucares_adicionados" value="{{ alimento.acucares_adicionados }}">
+    </div>
+
+    <br>
+
+    <div>
+        <label for="alergenos">Alérgenos</label><br>
+        <textarea id="alergenos" name="alergenos" rows="3">{{ alimento.alergenos }}</textarea>
+    </div>
+
+    <br>
+
+    <button type="submit" name="acao" value="atualizar">
         Atualizar
     </button>
 
-    <a href="{{ url_for('web.alimento_list') }}">
+    <button type="submit" name="acao" value="cancelar">
         Cancelar
-    </a>
+    </button>
+
+    <button
+        type="submit"
+        name="acao"
+        value="deletar"
+        onclick="return confirm('Tem certeza que deseja deletar este alimento?')"
+    >
+        Deletar
+    </button>
+
 </form>
+
+<br>
+
+<p>
+    <a href="{{ url_for('web.alimento_list') }}">
+        ← Voltar
+    </a>
+</p>
 
 {% endblock %}

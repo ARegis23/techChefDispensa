@@ -12,6 +12,7 @@ from flask import (
 )
 
 from services.auth_service import verificar_token_firebase
+
 from services.usuario_service import (
     garantir_usuario_logado,
     listar_usuarios_da_conta,
@@ -25,9 +26,20 @@ from services.usuario_service import (
     atualizar_preferencias_acessibilidade
 )
 
+from services.open_food_facts_service import buscar_alimento_por_barcode_api
+
+from services.alimento_service import (
+    listar_alimentos,
+    buscar_alimento,
+    criar_alimento,
+    atualizar_alimento,
+    deletar_alimento,
+    montar_dados_alimento
+)
+
 web_bp = Blueprint("web", __name__)
 
-
+# Decorador para proteger rotas que exigem autenticação
 def login_required(func):
     """
     Protege as páginas internas.
@@ -43,7 +55,7 @@ def login_required(func):
 
     return wrapper
 
-
+# Rotas para autenticação e páginas públicas
 @web_bp.route("/")
 def index():
     if "usuario" in session:
@@ -125,22 +137,24 @@ def session_login():
         }), 401
 
 
-@web_bp.route("/sobre")
-def sobre():
-    return render_template("login/aboutPage.html")
-
 @web_bp.route("/logout")
 def logout():
     session.clear()
     flash("Você saiu do sistema.", "info")
     return redirect(url_for("web.login"))
 
+# Rotas para dashboard e páginas informativas
 @web_bp.route("/menu/dashboard")
 @login_required
 def dashboard():
     return render_template("menu/dashboardPage.html")
 
+@web_bp.route("/sobre")
+def sobre():
+    return render_template("login/aboutPage.html")
 
+
+# Rotas para gerenciamento de configurações e preferências
 @web_bp.route("/menu/configuracoes", methods=["GET", "POST"])
 @login_required
 def configuracoes():
@@ -182,23 +196,13 @@ def configuracoes():
     )
 
 
+# Rotas para gerenciamento de alimentos
 @web_bp.route("/menu/alimentos")
 @login_required
 def alimento_list():
-    alimentos = [
-        {
-            "id": "1",
-            "nome": "Arroz",
-            "categoria": "Cereal",
-            "unidade": "kg"
-        },
-        {
-            "id": "2",
-            "nome": "Feijão",
-            "categoria": "Leguminosa",
-            "unidade": "kg"
-        }
-    ]
+    usuario_logado = session.get("usuario")
+
+    alimentos = listar_alimentos(usuario_logado)
 
     return render_template(
         "menu/alimentos/alimentoListPage.html",
@@ -206,48 +210,129 @@ def alimento_list():
     )
 
 
+@web_bp.route("/menu/alimentos/tabela")
+@login_required
+def alimento_tabela():
+    usuario_logado = session.get("usuario")
+
+    alimentos = listar_alimentos(usuario_logado)
+
+    return render_template(
+        "menu/alimentos/alimentoTablePage.html",
+        alimentos=alimentos
+    )
+
+
 @web_bp.route("/menu/alimentos/adicionar", methods=["GET", "POST"])
 @login_required
 def alimento_add():
+    usuario_logado = session.get("usuario")
+
+    alimento_api = None
+    barcode_consultado = request.args.get("barcode", "").strip()
+
+    if request.method == "GET" and barcode_consultado:
+        alimento_api = buscar_alimento_por_barcode_api(barcode_consultado)
+
+        if alimento_api:
+            flash("Dados encontrados na API. Confira e complete o que faltar.", "success")
+        else:
+            flash("Produto não encontrado na API. Preencha os dados manualmente.", "warning")
+            alimento_api = {
+                "barcode": barcode_consultado,
+                "nome": "",
+                "marca": "",
+                "categoria": "",
+                "peso": "",
+                "alergenos": "",
+                "kcal": "",
+                "carboidratos": "",
+                "proteinas": "",
+                "fibras": "",
+                "sodio": "",
+                "gorduras_totais": "",
+                "gorduras_saturadas": "",
+                "gorduras_trans": "",
+                "acucares_totais": "",
+                "acucares_adicionados": "",
+                "origem_dados": "manual"
+            }
+
     if request.method == "POST":
-        nome = request.form.get("nome")
-        categoria = request.form.get("categoria")
-        unidade = request.form.get("unidade")
+        try:
+            dados_alimento = montar_dados_alimento(request.form, usuario_logado)
 
-        print("Novo alimento recebido:")
-        print("Nome:", nome)
-        print("Categoria:", categoria)
-        print("Unidade:", unidade)
+            if not dados_alimento.get("barcode"):
+                flash("O código de barras é obrigatório.", "danger")
+                return redirect(url_for("web.alimento_add"))
 
-        flash("Alimento cadastrado temporariamente.", "success")
-        return redirect(url_for("web.alimento_list"))
+            if not dados_alimento.get("nome"):
+                flash("O nome do alimento é obrigatório.", "danger")
+                return redirect(url_for("web.alimento_add"))
 
-    return render_template("menu/alimentos/alimentoAddPage.html")
+            criar_alimento(usuario_logado, dados_alimento)
 
+            flash("Alimento cadastrado com sucesso.", "success")
+            return redirect(url_for("web.alimento_list"))
 
-@web_bp.route("/menu/alimentos/editar/<alimento_id>", methods=["GET", "POST"])
+        except ValueError as erro:
+            flash(str(erro), "danger")
+            return redirect(url_for("web.alimento_add"))
+
+        except Exception as erro:
+            print("Erro ao cadastrar alimento:", erro)
+            flash("Não foi possível cadastrar o alimento.", "danger")
+            return redirect(url_for("web.alimento_add"))
+
+    return render_template(
+        "menu/alimentos/alimentoAddPage.html",
+        alimento=alimento_api
+    )
+
+@web_bp.route("/menu/alimentos/editar/<barcode>", methods=["GET", "POST"])
 @login_required
-def alimento_edit(alimento_id):
-    alimento = {
-        "id": alimento_id,
-        "nome": "Arroz",
-        "categoria": "Cereal",
-        "unidade": "kg"
-    }
+def alimento_edit(barcode):
+    usuario_logado = session.get("usuario")
+
+    alimento = buscar_alimento(usuario_logado, barcode)
+
+    if not alimento:
+        flash("Alimento não encontrado.", "danger")
+        return redirect(url_for("web.alimento_list"))
 
     if request.method == "POST":
-        nome = request.form.get("nome")
-        categoria = request.form.get("categoria")
-        unidade = request.form.get("unidade")
+        acao = request.form.get("acao")
 
-        print("Alimento editado:")
-        print("ID:", alimento_id)
-        print("Nome:", nome)
-        print("Categoria:", categoria)
-        print("Unidade:", unidade)
+        if acao == "cancelar":
+            return redirect(url_for("web.alimento_list"))
 
-        flash("Alimento atualizado temporariamente.", "success")
-        return redirect(url_for("web.alimento_list"))
+        if acao == "deletar":
+            try:
+                deletar_alimento(usuario_logado, barcode)
+                flash("Alimento deletado com sucesso.", "success")
+                return redirect(url_for("web.alimento_list"))
+
+            except Exception as erro:
+                print("Erro ao deletar alimento:", erro)
+                flash("Não foi possível deletar o alimento.", "danger")
+                return redirect(url_for("web.alimento_edit", barcode=barcode))
+
+        try:
+            dados_alimento = montar_dados_alimento(request.form, usuario_logado)
+
+            if not dados_alimento.get("nome"):
+                flash("O nome do alimento é obrigatório.", "danger")
+                return redirect(url_for("web.alimento_edit", barcode=barcode))
+
+            atualizar_alimento(usuario_logado, barcode, dados_alimento)
+
+            flash("Alimento atualizado com sucesso.", "success")
+            return redirect(url_for("web.alimento_list"))
+
+        except Exception as erro:
+            print("Erro ao atualizar alimento:", erro)
+            flash("Não foi possível atualizar o alimento.", "danger")
+            return redirect(url_for("web.alimento_edit", barcode=barcode))
 
     return render_template(
         "menu/alimentos/alimentoEditPage.html",
@@ -255,6 +340,7 @@ def alimento_edit(alimento_id):
     )
 
 
+# Rotas para gerenciamento de usuários (apenas para administradores)
 @web_bp.route("/menu/usuarios")
 @login_required
 def usuario_list():

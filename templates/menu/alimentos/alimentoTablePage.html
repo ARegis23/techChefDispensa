@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Tabela Completa - TechChef Dispensa{% endblock %}
+
+{% block page_title %}Tabela completa de alimentos{% endblock %}
+
+{% block page_subtitle %}
+Informações completas dos alimentos cadastrados.
+{% endblock %}
+
+{% block content %}
+
+<p>
+    <a href="{{ url_for('web.alimento_list') }}">
+        ← Voltar para lista de alimentos
+    </a>
+</p>
+
+<div class="table-responsive">
+
+    <table border="1" cellpadding="8">
+        <thead>
+            <tr>
+                <th>Barcode</th>
+                <th>Nome</th>
+                <th>Marca</th>
+                <th>Peso</th>
+                <th>Categoria</th>
+                <th>Kcal</th>
+                <th>Carboidratos</th>
+                <th>Proteínas</th>
+                <th>Fibras</th>
+                <th>Sódio mg</th>
+                <th>Gorduras totais</th>
+                <th>Gorduras saturadas</th>
+                <th>Gorduras trans</th>
+                <th>Açúcares totais</th>
+                <th>Açúcares adicionados</th>
+                <th>Alérgenos</th>
+                <th>Origem</th>
+                <th>Atualizado por</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for alimento in alimentos %}
+                <tr>
+                    <td>{{ alimento.barcode }}</td>
+                    <td>{{ alimento.nome }}</td>
+                    <td>{{ alimento.marca }}</td>
+                    <td>{{ alimento.peso }}</td>
+                    <td>{{ alimento.categoria }}</td>
+                    <td>{{ alimento.kcal }}</td>
+                    <td>{{ alimento.carboidratos }}</td>
+                    <td>{{ alimento.proteinas }}</td>
+                    <td>{{ alimento.fibras }}</td>
+                    <td>{{ alimento.sodio }}</td>
+                    <td>{{ alimento.gorduras_totais }}</td>
+                    <td>{{ alimento.gorduras_saturadas }}</td>
+                    <td>{{ alimento.gorduras_trans }}</td>
+                    <td>{{ alimento.acucares_totais }}</td>
+                    <td>{{ alimento.acucares_adicionados }}</td>
+                    <td>{{ alimento.alergenos }}</td>
+                    <td>{{ alimento.origem_dados }}</td>
+                    <td>{{ alimento.atualizado_por_nome or "-" }}</td>
+                    <td>
+                        <a href="{{ url_for('web.alimento_edit', barcode=alimento.barcode) }}">
+                            Editar
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="18">
+                        Nenhum alimento cadastrado.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<br>
+
+<p>
+    <a href="{{ url_for('web.alimento_list') }}">
+        ← Voltar
+    </a>
+</p>
+
+{% endblock %}
