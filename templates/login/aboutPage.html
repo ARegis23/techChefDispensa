@@ -4,16 +4,53 @@
 
 {% block content %}
 
-<h2>Sobre o TechChef Dispensa</h2>
+<section>
 
-<p>
-    O TechChef Dispensa é uma aplicação web voltada para o controle de alimentos,
-    organização da despensa e apoio ao planejamento alimentar.
-</p>
+    <h2>Sobre o Projeto</h2>
 
-<p>
-    Nesta primeira versão, estamos estruturando as páginas, rotas e conexão base
-    com o Firebase.
-</p>
+    <h3>Tema escolhido</h3>
+
+    <p>
+        O projeto <strong>TechChef Dispensa</strong> tem como tema o desenvolvimento
+        de uma aplicação web para verificação dos alimentos e sua parte nutricional conforme compra ou uso dos usuários.
+    </p>
+
+    <h3>Objetivo do projeto</h3>
+
+    <p>
+        O objetivo da aplicação é auxiliar usuários na verificação nutricional dos alimentos, fornecendo informações detalhadas sobre os produtos, como ingredientes, valor nutricional e possíveis alergênicos. A aplicação visa promover uma alimentação mais consciente e saudável, facilitando a escolha de alimentos adequados às necessidades e preferências dos usuários.
+    </p>
+
+    <p>
+        Nesta etapa inicial, o sistema está sendo estruturado com autenticação,
+        gerenciamento de usuários, rotas protegidas e integração com Firebase,
+        preparando a base para o desenvolvimento das demais funcionalidades.
+    </p>
+
+    <h3>Desenvolvedores</h3>
+
+    <ul>
+        <li>
+            <strong>Alisson Regis Rodrigues dos Santos</strong>
+            <br>
+            Mat: 2840482321000
+        </li>
+
+        <br>
+
+        <li>
+            <strong>Daniel Ferreira dos Santos</strong>
+            <br>
+            Mat: 2840482321000
+        </li>
+    </ul>
+
+    <p>
+        <a href="{{ url_for('web.login') }}">
+            Voltar para o login
+        </a>
+    </p>
+
+</section>
 
 {% endblock %}
