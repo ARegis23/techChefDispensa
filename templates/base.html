@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
 
-    <title>{% block title %}TechChef Dispensa{% endblock %}</title>
+    <title>{% block title %}TechChef Despensa{% endblock %}</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -33,7 +33,7 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <h2>TechChef</h2>
-                <p>Dispensa</p>
+                <p>Despensa</p>
             </div>
 
             <button type="button" class="sidebar-toggle" id="sidebarToggle">
@@ -89,7 +89,7 @@
     {% else %}
 
         <header class="public-header">
-            <h1>TechChef Dispensa</h1>
+            <h1>TechChef Despensa</h1>
 
             <nav>
                 <a href="{{ url_for('web.login') }}">Login</a>
@@ -105,7 +105,7 @@
         {% if session.get("usuario") %}
             <header class="page-header">
                 <div>
-                    <h1>{% block page_title %}TechChef Dispensa{% endblock %}</h1>
+                    <h1>{% block page_title %}TechChef Despensa{% endblock %}</h1>
                     <p>{% block page_subtitle %}{% endblock %}</p>
                 </div>
             </header>

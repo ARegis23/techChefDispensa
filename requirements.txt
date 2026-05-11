@@ -6,3 +6,6 @@ firebase-admin==6.6.0
 
 # Variáveis de ambiente
 python-dotenv==1.0.1
+
+# HTTP requests
+requests==2.33.1

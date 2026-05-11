@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Importar JSON{% endblock %}
+
+{% block page_title %}Importação via arquivo{% endblock %}
+
+{% block content %}
+
+<h2>Enviar arquivo JSON</h2>
+
+<p>
+    Os alimentos enviados por aqui serão cadastrados em Alimentos e também
+    aparecerão em Dados importados com a origem Documento externo (JSON).
+</p>
+
+<form method="POST" enctype="multipart/form-data">
+
+    <p>
+        <label>Arquivo JSON:</label><br>
+        <input type="file" name="arquivo_json" accept=".json" required>
+    </p>
+
+    <button type="submit">Importar</button>
+
+</form>
+
+<br>
+
+<p>
+    <a href="{{ url_for('web.importacao_list') }}">
+        ← Voltar
+    </a>
+</p>
+
+{% endblock %}

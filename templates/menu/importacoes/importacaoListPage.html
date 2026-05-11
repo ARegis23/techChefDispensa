@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Importações - TechChef Dispensa{% endblock %}
+{% block title %}Importações - TechChef Despensa{% endblock %}
 
 {% block page_title %}Importações{% endblock %}
 
@@ -24,63 +24,81 @@ Dados obtidos de uma API externa e armazenados no sistema.
             Nova importação
         </a>
     </p>
+    <p>
+        <a href="{{ url_for('web.importacao_upload') }}">
+            Importar via JSON
+        </a>
+    </p>
 </section>
 
 <div class="table-responsive">
 
-    <table border="1" cellpadding="8">
-        <thead>
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>Barcode</th>
+            <th>Nome</th>
+            <th>Marca</th>
+            <th>Categoria</th>
+            <th>Origem</th>
+            <th>Status</th>
+            <th>ObservaÃ§Ã£o</th>
+            <th>Importado por</th>
+            <th>Aprovar</th>
+            <th>Editar</th>
+            <th>Deletar</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for importacao in importacoes %}
             <tr>
-                <th>Barcode</th>
-                <th>Nome</th>
-                <th>Marca</th>
-                <th>Categoria</th>
-                <th>Origem</th>
-                <th>Status</th>
-                <th>Importado por</th>
-                <th>Editar</th>
-                <th>Deletar</th>
-            </tr>
-        </thead>
+                <td>{{ importacao.barcode }}</td>
+                <td>{{ importacao.nome or "-" }}</td>
+                <td>{{ importacao.marca or "-" }}</td>
+                <td>{{ importacao.categoria or "-" }}</td>
+                <td>{{ importacao.origem }}</td>
+                <td>{{ importacao.status }}</td>
+                <td>{{ importacao.observacao or "-" }}</td>
+                <td>{{ importacao.importado_por_nome or "-" }}</td>
 
-        <tbody>
-            {% for importacao in importacoes %}
-                <tr>
-                    <td>{{ importacao.barcode }}</td>
-                    <td>{{ importacao.nome or "-" }}</td>
-                    <td>{{ importacao.marca or "-" }}</td>
-                    <td>{{ importacao.categoria or "-" }}</td>
-                    <td>{{ importacao.origem }}</td>
-                    <td>{{ importacao.status }}</td>
-                    <td>{{ importacao.importado_por_nome or "-" }}</td>
-
-                    <td>
-                        <a href="{{ url_for('web.importacao_edit', importacao_id=importacao.id) }}">
-                            Editar
-                        </a>
-                    </td>
-
-                    <td>
-                        <form
-                            method="POST"
-                            action="{{ url_for('web.importacao_delete', importacao_id=importacao.id) }}"
-                            onsubmit="return confirm('Tem certeza que deseja deletar esta importação?')"
-                        >
-                            <button type="submit">
-                                Deletar
-                            </button>
+                <!-- APROVAR -->
+                <td>
+                    {% if importacao.status not in ["aprovado", "enviado_para_alimentos"] %}
+                        <form method="POST"
+                              action="{{ url_for('web.importacao_aprovar', importacao_id=importacao.id) }}">
+                            <button type="submit">Aprovar</button>
                         </form>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="9">
-                        Nenhuma importação cadastrada.
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    {% else %}
+                        ✔
+                    {% endif %}
+                </td>
+
+                <!-- EDITAR -->
+                <td>
+                    <a href="{{ url_for('web.importacao_edit', importacao_id=importacao.id) }}">
+                        Editar
+                    </a>
+                </td>
+
+                <!-- DELETAR -->
+                <td>
+                    <form method="POST"
+                          action="{{ url_for('web.importacao_delete', importacao_id=importacao.id) }}"
+                          onsubmit="return confirm('Tem certeza que deseja deletar?')">
+                        <button type="submit">Deletar</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="11">
+                    Nenhuma importação cadastrada.
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 </div>
 

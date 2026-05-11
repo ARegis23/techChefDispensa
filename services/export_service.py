@@ -111,7 +111,7 @@ def montar_dados_exportacao(usuario_logado):
 
     dados_exportacao = {
         "metadata": {
-            "aplicacao": "TechChef Dispensa",
+            "aplicacao": "TechChef Despensa",
             "formato": "json",
             "versao_exportacao": "1.0",
             "gerado_em": datetime.now().isoformat(),
@@ -144,6 +144,48 @@ def gerar_json_exportacao(usuario_logado):
         indent=4,
         default=_converter_valor_json
     )
+
+
+def montar_dados_exportacao_alimentos(usuario_logado):
+    """
+    Monta uma exportacao focada nos alimentos cadastrados no grupo.
+    """
+
+    admin_uid = _obter_admin_uid(usuario_logado)
+
+    return {
+        "metadata": {
+            "aplicacao": "TechChef Despensa",
+            "formato": "json",
+            "tipo_exportacao": "alimentos",
+            "versao_exportacao": "1.0",
+            "gerado_em": datetime.now().isoformat(),
+            "gerado_por": {
+                "uid": usuario_logado.get("uid"),
+                "nome": usuario_logado.get("nome"),
+                "email": usuario_logado.get("email"),
+                "papel": usuario_logado.get("papel")
+            },
+            "admin_uid": admin_uid
+        },
+        "alimentos": listar_alimentos_exportacao(admin_uid)
+    }
+
+
+def gerar_json_exportacao_alimentos(usuario_logado):
+    """
+    Gera uma string JSON apenas com os alimentos cadastrados.
+    """
+
+    dados = montar_dados_exportacao_alimentos(usuario_logado)
+
+    return json.dumps(
+        dados,
+        ensure_ascii=False,
+        indent=4,
+        default=_converter_valor_json
+    )
+
 
 def listar_importacoes_exportacao(admin_uid):
     """

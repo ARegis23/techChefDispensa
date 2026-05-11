@@ -13,7 +13,7 @@ def testar_conexao_firebase():
     """
 
     dados_teste = {
-        "nome": "TechChef Dispensa",
+        "nome": "TechChef Despensa",
         "status": "conexao_ok",
         "mensagem": "Firebase conectado com sucesso."
     }

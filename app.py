@@ -14,7 +14,7 @@ def create_app():
 
     app.config["SECRET_KEY"] = os.getenv(
         "SECRET_KEY",
-        "dev-techchef-dispensa"
+        "dev-techchef-despensa"
     )
 
     app.register_blueprint(web_bp)

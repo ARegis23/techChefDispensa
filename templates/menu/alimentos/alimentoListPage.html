@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Alimentos - TechChef Dispensa{% endblock %}
+{% block title %}Alimentos - TechChef Despensa{% endblock %}
 
 {% block page_title %}Alimentos{% endblock %}
 
@@ -29,6 +29,12 @@ Lista resumida dos alimentos cadastrados na conta.
 
         <a href="{{ url_for('web.alimento_tabela') }}">
             Ver tabela completa
+        </a>
+
+        |
+
+        <a href="{{ url_for('web.alimento_exportar_json') }}">
+            Exportar alimentos em JSON
         </a>
     </p>
 
