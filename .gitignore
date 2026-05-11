@@ -1,35 +1,70 @@
-# Python
+# ============================================================
+# PYTHON
+# ============================================================
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*.pyc
 
-# Ambientes virtuais
+# ============================================================
+# AMBIENTES VIRTUAIS
+# ============================================================
 venv/
 .venv/
+env/
 functions/venv/
 functions/.venv/
 
-# Firebase local
+# ============================================================
+# NODE / JAVASCRIPT  ← FALTAVA (node_modules está commitado!)
+# ============================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# ============================================================
+# FIREBASE
+# ============================================================
 .firebase/
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
+.firebaserc.local
 
-# Sistema/Editor
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-
-# Variáveis de ambiente
+# ============================================================
+# VARIÁVEIS DE AMBIENTE E SEGREDOS  ← CRÍTICO
+# ============================================================
 .env
 .env.*
-
-# Segredos locais
 secrets/
 *serviceAccountKey.json
 *.key
 *.pem
-.env
-.env.*
+config/secrets.*
+config/*.json
+
+# ============================================================
+# EXPORTAÇÕES GERADAS PELA APP
+# ============================================================
+exportacoesVerificar/*.json
+exportacoesVerificar/*.zip
+
+# ============================================================
+# SISTEMA / EDITORES
+# ============================================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ============================================================
+# FLASK
+# ============================================================
+instance/
+*.sqlite
+flask_session/

@@ -8,7 +8,25 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
-<body class="{% if session.get('usuario') %}body-app{% else %}body-public{% endif %}">
+{% set usuario = session.get("usuario") %}
+{% set acessibilidade = usuario.get("acessibilidade", {}) if usuario else {} %}
+
+{% set tema = acessibilidade.get("tema", "sistema") %}
+{% set tamanho_texto = acessibilidade.get("tamanho_texto", "medio") %}
+{% set contraste = acessibilidade.get("contraste", "normal") %}
+{% set reduzir_animacoes = acessibilidade.get("reduzir_animacoes", "nao") %}
+{% set densidade_interface = acessibilidade.get("densidade_interface", "confortavel") %}
+{% set fonte_legivel = acessibilidade.get("fonte_legivel", "padrao") %}
+
+<body class="
+    {% if session.get('usuario') %}body-app{% else %}body-public{% endif %}
+    tema-{{ tema }}
+    texto-{{ tamanho_texto }}
+    contraste-{{ contraste }}
+    animacoes-{{ reduzir_animacoes }}
+    densidade-{{ densidade_interface }}
+    fonte-{{ fonte_legivel }}
+">
 
     {% if session.get("usuario") %}
 

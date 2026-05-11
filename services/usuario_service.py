@@ -51,6 +51,7 @@ def garantir_usuario_logado(usuario_sessao):
         "papel": "admin",
         "admin_uid": uid,
         "ativo": True,
+        "acessibilidade": PREFERENCIAS_ACESSIBILIDADE_PADRAO.copy(),
         "criado_em": firestore.SERVER_TIMESTAMP,
         "atualizado_em": firestore.SERVER_TIMESTAMP
     }
@@ -154,6 +155,7 @@ def criar_usuario_membro(usuario_logado, nome, email, senha):
         "papel": "membro",
         "admin_uid": admin_uid,
         "ativo": True,
+        "acessibilidade": PREFERENCIAS_ACESSIBILIDADE_PADRAO.copy(),
         "criado_em": firestore.SERVER_TIMESTAMP,
         "atualizado_em": firestore.SERVER_TIMESTAMP
     }

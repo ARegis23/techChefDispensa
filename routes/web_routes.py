@@ -128,9 +128,16 @@ def session_login():
             "email": usuario_firestore.get("email"),
             "foto": usuario_firestore.get("foto"),
             "papel": usuario_firestore.get("papel"),
-            "admin_uid": usuario_firestore.get("admin_uid")
+            "admin_uid": usuario_firestore.get("admin_uid"),
+            "acessibilidade": usuario_firestore.get("acessibilidade", {
+                "tema": "sistema",
+                "tamanho_texto": "medio",
+                "contraste": "normal",
+                "reduzir_animacoes": "nao",
+                "densidade_interface": "confortavel",
+                "fonte_legivel": "padrao"
+            })
         }
-
         return jsonify({
             "ok": True,
             "redirect": url_for("web.dashboard")
