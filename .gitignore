@@ -29,6 +29,7 @@ package-lock.json
 # FIREBASE
 # ============================================================
 .firebase/
+js/firebase_init.js
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
